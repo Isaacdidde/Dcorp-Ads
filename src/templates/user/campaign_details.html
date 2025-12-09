@@ -1,0 +1,197 @@
+{% extends "user/layout/base_user.html" %}
+{% block title %}Campaign Insights – Dcorp Ads{% endblock %}
+
+{% block content %}
+
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 14px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(12px);
+    }
+    .stat-card {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        text-align: center;
+    }
+    .stat-card h3 {
+        font-weight: 700;
+        margin-top: 5px;
+    }
+    .meta-item {
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+    .meta-item span {
+        font-weight: 600;
+        color: #bcdcff;
+    }
+</style>
+
+<h2 class="fw-bold mb-2">{{ campaign.title }}</h2>
+<p class="text-muted mb-4">Campaign Performance Overview</p>
+
+<!-- TOP KPI CARDS -->
+<div class="row g-4">
+
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+            <label>Total Impressions</label>
+            <h3>{{ impressions }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+            <label>Total Clicks</label>
+            <h3>{{ clicks }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+            <label>CTR</label>
+            <h3>{{ ctr }}%</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+            <label>Spent</label>
+            <h3>₹{{ spent }}</h3>
+        </div>
+    </div>
+</div>
+
+<!-- CAMPAIGN DETAILS + BUDGET -->
+<div class="row g-4 mt-4">
+
+    <!-- Left section: overview details -->
+    <div class="col-md-6">
+        <div class="glass-card">
+            <h5 class="fw-semibold mb-3">Campaign Details</h5>
+
+            <div class="meta-item">
+                <span>Status:</span> {{ campaign.status|title }}
+            </div>
+
+            <div class="meta-item">
+                <span>Bidding Type:</span> {{ campaign.bidding_type }}
+            </div>
+
+            <div class="meta-item">
+                <span>Bid Amount:</span> ₹{{ campaign.bid_amount }}
+            </div>
+
+            <div class="meta-item">
+                <span>Budget Allocated:</span> ₹{{ allocated_budget }}
+            </div>
+
+            <div class="meta-item">
+                <span>Total Spent:</span> ₹{{ spent }}
+            </div>
+
+            <div class="meta-item">
+                <span>Remaining Budget:</span> ₹{{ remaining }}
+            </div>
+
+            <div class="meta-item">
+                <span>Redirect URL:</span> 
+                <a href="{{ redirect_url }}" target="_blank" class="text-info">
+                    {{ redirect_url }}
+                </a>
+            </div>
+
+            <div class="mt-4">
+                <small class="text-muted">Spend Progress</small>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-danger"
+                         style="width: {{ spend_velocity }}%;">
+                    </div>
+                </div>
+                <small class="text-muted">{{ spend_velocity }}% consumed</small>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Right: creative preview -->
+    <div class="col-md-6">
+        <div class="glass-card text-center">
+            <h5 class="fw-semibold mb-3">Ad Creative Preview</h5>
+
+            <img src="{{ creative_url }}" 
+                 class="img-fluid rounded mb-3"
+                 style="max-height: 260px; object-fit: cover;" />
+
+            <div class="alert alert-info p-2 small">
+                Creative Status: <strong>{{ creative_status }}</strong>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- TIMELINE CHART -->
+<div class="row g-4 mt-4">
+    <div class="col-md-12">
+        <div class="glass-card p-4">
+            <h5 class="fw-semibold mb-3">Performance Timeline</h5>
+            <canvas id="timelineChart"></canvas>
+            <p class="text-muted small mt-2">
+                Impressions vs Clicks over the lifetime of the campaign.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+new Chart(document.getElementById('timelineChart'), {
+    type: 'line',
+    data: {
+        labels: {{ timeline_labels|safe }},
+        datasets: [
+            {
+                label: "Impressions",
+                data: {{ timeline_impressions|safe }},
+                borderWidth: 2,
+                borderColor: "#6f6bff"
+            },
+            {
+                label: "Clicks",
+                data: {{ timeline_clicks|safe }},
+                borderWidth: 2,
+                borderColor: "#5cd1ff"
+            }
+        ]
+    },
+    options: { responsive: true }
+});
+imp_pipeline = [
+    {"$match": {"campaign_id": cid_str}},
+    {"$group": {
+        "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$timestamp"}},
+        "count": {"$sum": 1}
+    }},
+    {"$sort": {"_id": 1}}
+]
+
+click_pipeline = [
+    {"$match": {"campaign_id": cid_str}},
+    {"$group": {
+        "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$timestamp"}},
+        "count": {"$sum": 1}
+    }},
+    {"$sort": {"_id": 1}}
+]
+
+</script>
+
+{% endblock %}

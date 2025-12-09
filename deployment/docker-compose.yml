@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+
+  web:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: dcorp_web
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      FLASK_ENV: production
+      MONGO_URI: ${MONGO_URI}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - ../logs:/app/logs
+      - ../backups:/app/backups
+
+  # Optional: MongoDB local container (if not using Atlas)
+  mongo:
+    image: mongo:7
+    container_name: dcorp_mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongo_data:

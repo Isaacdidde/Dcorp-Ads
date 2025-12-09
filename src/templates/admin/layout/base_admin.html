@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dcorp Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Core admin theme -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dark.css') }}">
+
+  <style>
+    /* ---------------------------
+       TOP NAVBAR
+    ----------------------------*/
+    .top-navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f1620;
+      padding: 14px 22px;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      border-bottom: 1px solid #1f2a38;
+    }
+
+    .toggle-btn {
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      margin-right: 18px;
+      transition: 0.2s;
+    }
+
+    .toggle-btn:hover {
+      color: #7c5cff;
+    }
+
+    .brand {
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    /* ---------------------------
+       LAYOUT
+    ----------------------------*/
+    .layout {
+      display: flex;
+      width: 100%;
+    }
+
+    /* ---------------------------
+       SIDEBAR
+    ----------------------------*/
+    .sidebar {
+      width: 240px;
+      background: #0f1620;
+      height: calc(100vh - 60px);
+      position: fixed;
+      top: 60px;
+      left: 0;
+      transition: width 0.3s ease;
+      padding-top: 20px;
+      overflow: hidden;
+      border-right: 1px solid #1f2a38;
+    }
+
+    .sidebar.collapsed {
+      width: 72px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      width: 100%;
+    }
+
+    .sidebar ul li a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      color: #d5ddee;
+      font-size: 15px;
+      text-decoration: none;
+      transition: 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .sidebar ul li a i {
+      font-size: 18px;
+      width: 22px;
+      text-align: center;
+    }
+
+    .sidebar ul li a:hover {
+      background: #1a2332;
+      color: #ffffff;
+    }
+
+    .sidebar.collapsed ul li a span {
+      opacity: 0;
+      visibility: hidden;
+      width: 0;
+      transition: opacity 0.2s ease, width 0.2s ease;
+    }
+
+    .sidebar.collapsed ul li a {
+      justify-content: center;
+      padding: 14px 0;
+    }
+
+    /* ---------------------------
+       MAIN CONTENT
+    ----------------------------*/
+    .content-area {
+      margin-left: 240px;
+      padding: 30px;
+      width: calc(100% - 240px);
+      transition: margin-left 0.3s ease, width 0.3s ease;
+    }
+
+    .content-area.collapsed {
+      margin-left: 72px;
+      width: calc(100% - 72px);
+    }
+
+    /* ---------------------------
+       LOGOUT MODAL
+    ----------------------------*/
+    #logoutModal {
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:999999;
+      background:rgba(0,0,0,0.65);
+      align-items:center;
+      justify-content:center;
+    }
+
+    #logoutModal .modal-box {
+      background:#0f1620;
+      border:1px solid #233042;
+      border-radius:14px;
+      padding:24px 28px;
+      width:360px;
+      text-align:center;
+    }
+
+    #logoutModal h3 {
+      color:#ff6b6b;
+      margin-bottom:6px;
+      font-size:20px;
+      font-weight:700;
+    }
+
+    #logoutModal p {
+      color:#cfe5ff;
+      font-size:14px;
+      margin-bottom:18px;
+    }
+
+    .modal-actions {
+      display:flex;
+      justify-content:center;
+      gap:12px;
+    }
+
+    .btn-cancel {
+      background:#213243;
+      color:#dbeeff;
+      padding:8px 14px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    .btn-cancel:hover {
+      background:#2a3c4f;
+    }
+
+    .btn-logout {
+      background:#d63b3b;
+      color:white;
+      padding:8px 14px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    .btn-logout:hover {
+      background:#b62d2d;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===================== TOP NAVBAR ===================== -->
+<nav class="top-navbar">
+  <div class="left">
+    <button id="toggleSidebar" class="toggle-btn">&#9776;</button>
+    <span class="brand">Dcorp Admin</span>
+  </div>
+</nav>
+
+<!-- ===================== PAGE LAYOUT ===================== -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar">
+    <ul>
+
+      <li>
+        <a href="{{ url_for('admin_panel.index') }}">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="{{ url_for('admin_panel.campaigns') }}">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Campaigns</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="{{ url_for('admin_panel.users') }}">
+          <i class="fa-solid fa-users"></i>
+          <span>Users</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="{{ url_for('admin_panel.transactions') }}">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span>Transactions</span>
+        </a>
+      </li>
+
+      <li>
+        <a href="#" data-confirm-logout style="color:#ff7373;">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </a>
+      </li>
+
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="mainContent" class="content-area">
+    {% block content %}{% endblock %}
+  </main>
+
+</div>
+
+
+<!-- ===================== LOGOUT MODAL ===================== -->
+<div id="logoutModal">
+  <div class="modal-box">
+    <h3>Confirm Logout?</h3>
+    <p>You will need to login again to access the admin panel.</p>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeLogout()">Cancel</button>
+      <button class="btn-logout" onclick="confirmLogout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== JS ===================== -->
+<script>
+  const toggleBtn   = document.getElementById("toggleSidebar");
+  const sidebar     = document.getElementById("sidebar");
+  const contentArea = document.getElementById("mainContent");
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+    contentArea.classList.toggle("collapsed");
+  });
+
+  /* ---------------------------------------
+     Logout Confirmation Modal Logic
+  --------------------------------------- */
+  const logoutModal = document.getElementById("logoutModal");
+
+  function openLogout() {
+    logoutModal.style.display = "flex";
+  }
+  function closeLogout() {
+    logoutModal.style.display = "none";
+  }
+
+  // 🔥 FIXED ENDPOINT NAME HERE
+  function confirmLogout() {
+    window.location.href = "{{ url_for('admin_panel.logout') }}";
+  }
+
+  document.addEventListener("click", function (e) {
+    const link = e.target.closest("[data-confirm-logout]");
+    if (link) {
+      e.preventDefault();
+      openLogout();
+    }
+  });
+</script>
+
+</body>
+</html>

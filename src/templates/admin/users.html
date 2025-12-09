@@ -1,0 +1,136 @@
+{% extends "admin/layout/base_admin.html" %}
+{% block title %}Users{% endblock %}
+
+{% block content %}
+
+<style>
+  .users-container {
+    background: #0f1620;
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid #1b2533;
+  }
+
+  .users-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #eef3ff;
+    margin-bottom: 18px;
+  }
+
+  .user-card {
+    background: #0d141d;
+    border: 1px solid #1d2734;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #222;
+    object-fit: cover;
+  }
+
+  .user-info {
+    flex-grow: 1;
+  }
+
+  .user-info strong {
+    font-size: 18px;
+    color: #f2f6ff;
+  }
+
+  .user-info small {
+    color: #9aaeca;
+  }
+
+  .user-meta {
+    display: flex;
+    gap: 26px;
+    margin-top: 6px;
+  }
+
+  .meta-item {
+    font-size: 13px;
+    color: #a8bed7;
+  }
+
+  .status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .status-active {
+    background: #3ddc84;
+    color: #000;
+  }
+
+  .status-suspended {
+    background: #ff4d4d;
+    color: #fff;
+  }
+
+  .btn-view {
+    background: #7c5cff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .btn-view:hover {
+    background: #6a4ef0;
+  }
+</style>
+
+
+<div class="users-container">
+  <div class="users-title">All Users</div>
+
+  {% for u in users %}
+  <div class="user-card">
+
+    <!-- Profile Picture -->
+    <img src="{{ u.profile_pic or '/static/image/default_user.png' }}"
+         class="user-avatar">
+
+    <!-- Main User Info -->
+    <div class="user-info">
+      <strong>{{ u.name or u.full_name or "Unknown User" }}</strong><br>
+      <small>{{ u.email }}</small>
+
+      <div class="user-meta">
+        <div class="meta-item">Joined: {{ u.created_at_str }}</div>
+        <div class="meta-item">Last Login: {{ u.last_login or "—" }}</div>
+        <div class="meta-item">Campaigns: {{ u.total_campaigns or 0 }}</div>
+        <div class="meta-item">Spend: ₹{{ u.total_spend or 0 }}</div>
+        <div class="meta-item">Wallet: ₹{{ u.wallet_balance or 0 }}</div>
+      </div>
+    </div>
+
+    <!-- Status -->
+    {% set user_status = u.status or "active" %}
+    <div class="status-badge status-{{ user_status }}">
+      {{ user_status }}
+    </div>
+
+    <!-- View Button -->
+    <a href="{{ url_for('admin_panel.index') }}" class="btn-view">View</a>
+
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

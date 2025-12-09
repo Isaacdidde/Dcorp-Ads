@@ -1,0 +1,94 @@
+# ============================================
+# PYTHON & FLASK
+# ============================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.log
+*.sqlite3
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Flask instance folder
+instance/
+*.db
+
+# ============================================
+# ENVIRONMENT & SECRETS
+# ============================================
+.env
+.env.*
+*.secret
+*.key
+
+# ============================================
+# LOG FILES
+# ============================================
+logs/
+*.log
+
+# ============================================
+# STATIC UPLOADS
+# (Let your app generate these — never push them)
+# ============================================
+src/static/uploads/
+src/static/uploads/*
+!src/static/uploads/.gitkeep
+
+# ============================================
+# CACHE / TEMP FILES
+# ============================================
+*.cache
+*.tmp
+*.temp
+temp/
+tmp/
+.cache/
+coverage/
+pytest_cache/
+dist/
+build/
+*.egg-info/
+
+# ============================================
+# EDITOR & OS FILES
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ============================================
+# GUNICORN / UWSGI / DOCKER ARTIFACTS
+# ============================================
+*.pid
+*.sock
+*.seed
+*.socket
+
+# ============================================
+# NODE MODULES (if any frontend or admin assets)
+# ============================================
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# ============================================
+# MISC
+# ============================================
+*.bak
+*.orig
+
+
+# Local seeds / scripts
+seed_admin.py
+seed_slots.py

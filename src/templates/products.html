@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Products | Admin Panel{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Products</h2>
+    <a href="/admin/products/new" class="btn btn-primary">Add Product</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+
+        <table class="table table-hover table-bordered mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th style="width: 140px;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if products and products|length > 0 %}
+                    {% for p in products %}
+                    <tr>
+                        <td>{{ p.name }}</td>
+                        <td>{{ p.code }}</td>
+                        <td class="text-muted">{{ p.description }}</td>
+
+                        <td>
+                            <a href="/admin/products/{{ p.id }}" class="btn btn-sm btn-outline-primary">View</a>
+                            <a href="/admin/products/{{ p.id }}/edit" class="btn btn-sm btn-outline-dark">Edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            No products found. Please add one.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}

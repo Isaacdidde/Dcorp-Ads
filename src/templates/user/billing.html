@@ -1,0 +1,104 @@
+{% extends "user/layout/base_user.html" %}
+{% block title %}Billing{% endblock %}
+
+{% block content %}
+
+<style>
+.billing-box {
+    background: var(--bs-body-bg);
+    border: 1px solid rgba(0,0,0,0.08);
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.tx-row {
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 10px 0;
+}
+.tx-credit { color: #28a745; font-weight: 600; }
+.tx-debit { color: #dc3545; font-weight: 600; }
+</style>
+
+<div class="container mt-3">
+
+    <h3 class="fw-bold mb-3">Billing & Transactions</h3>
+
+    <!-- MONTHLY SPEND -->
+    <div class="billing-box">
+        <div class="section-title">Monthly Spend</div>
+        <h2>₹{{ "%.2f"|format(month_spend) }}</h2>
+        <small class="text-muted">This month’s total ad spending</small>
+    </div>
+
+    <!-- DAILY SPEND SUMMARY -->
+    <div class="billing-box">
+        <div class="section-title">Daily Spend Summary</div>
+
+        {% if daily_spend %}
+            {% for day, amt in daily_spend.items() %}
+                <div class="tx-row d-flex justify-content-between">
+                    <div>{{ day }}</div>
+                    <strong class="tx-debit">₹{{ "%.2f"|format(amt) }}</strong>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No spending yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- CAMPAIGN-WISE SPEND -->
+    <div class="billing-box">
+        <div class="section-title">Campaign Spend</div>
+
+        {% for c in campaigns %}
+        <div class="tx-row d-flex justify-content-between">
+            <div>
+                <strong>{{ c.title }}</strong><br>
+                <small class="text-muted">{{ c.product_name }}</small>
+            </div>
+            <strong class="tx-debit">₹{{ "%.2f"|format(c.spend) }}</strong>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- FULL TRANSACTION HISTORY -->
+    <div class="billing-box">
+        <div class="section-title">All Transactions</div>
+
+        {% if txs %}
+            {% for t in txs %}
+            <div class="tx-row d-flex justify-content-between">
+                <div>
+                    <strong>
+                        {% if t.reason %}
+                            {{ t.reason|replace("_", " ")|capitalize }}
+                        {% else %}
+                            {{ t.method }}
+                        {% endif %}
+                    </strong><br>
+                    <small class="text-muted">{{ t.created_at_str }}</small>
+                </div>
+
+                <div>
+                    {% if t.display_type == "credit" %}
+                        <span class="tx-credit">+ ₹{{ t.amount }}</span>
+                    {% else %}
+                        <span class="tx-debit">- ₹{{ t.amount }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No transactions yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

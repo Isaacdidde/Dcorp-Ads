@@ -1,0 +1,216 @@
+{% extends "user/layout/base_user.html" %}
+{% block title %}View Campaign{% endblock %}
+
+{% block content %}
+
+<style>
+
+    /* Glass Container */
+    .glass-box {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(14px);
+        border-radius: 18px;
+        padding: 28px;
+        border: 1px solid rgba(255,255,255,0.15);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+    }
+
+    /* Title Bar */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+    .page-header h3 {
+        font-weight: 700;
+        font-size: 24px;
+        color: #131212;
+    }
+
+    /* Sub-labels */
+    .view-label {
+        font-size: 13px;
+        color: #141516;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    /* Value text */
+    .view-value {
+        font-size: 17px;
+        font-weight: 600;
+        color: #415065;
+        margin-bottom: 18px;
+    }
+
+    .redirect-link {
+        font-weight: 600;
+        color: #4ca3ff;
+        text-decoration: none;
+        word-break: break-all;
+    }
+
+    .redirect-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Section Divider */
+    .section-divider {
+        border-top: 1px solid rgba(255,255,255,0.15);
+        margin: 22px 0;
+    }
+
+    /* Creative Image */
+    .creative-img {
+        width: 100%;
+        max-height: 280px;
+        border-radius: 16px;
+        object-fit: cover;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        margin-bottom: 18px;
+    }
+
+    /* Badges */
+    .status-badge {
+        font-size: 14px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+</style>
+
+<div class="container-fluid px-3">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h3>Campaign Overview</h3>
+
+        <a href="{{ url_for('campaign.campaigns_list') }}"
+           class="btn btn-light btn-sm rounded-pill px-3">
+            ← Back to Campaigns
+        </a>
+    </div>
+
+    <div class="glass-box">
+
+        <!-- CREATIVE PREVIEW -->
+        {% if campaign.creative_image %}
+            <img src="{{ campaign.creative_image }}" class="creative-img">
+        {% else %}
+            <p class="text-muted">No creative uploaded.</p>
+        {% endif %}
+
+        <!-- BASIC INFO -->
+        <div class="view-label">Campaign Title</div>
+        <div class="view-value">{{ campaign.title }}</div>
+
+        <div class="view-label">Product / Offer Name</div>
+        <div class="view-value">{{ campaign.product_name or "—" }}</div>
+
+        <div class="view-label">Description</div>
+        <div class="view-value">{{ campaign.description or "—" }}</div>
+
+        <!-- REDIRECT URL -->
+        <div class="view-label">Redirect URL</div>
+        <div class="view-value">
+            {% if campaign.redirect_url %}
+                <a href="{{ campaign.redirect_url }}" target="_blank" class="redirect-link">
+                    {{ campaign.redirect_url }}
+                </a>
+            {% else %}
+                —
+            {% endif %}
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- SLOT / BIDDING / BID -->
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="view-label">Ad Placement Slot</div>
+                <div class="view-value text-info">
+                    {{ campaign.slot_id | replace("_", " ") | title }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="view-label">Bidding Type</div>
+                <div class="view-value">{{ campaign.bidding_type }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="view-label">Bid Amount</div>
+                <div class="view-value">
+                    ₹{{ campaign.bid_amount }}
+                    {% if campaign.bidding_type == "CPM" %}/ 1000{% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BUDGET + STATUS -->
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="view-label">Total Budget</div>
+                <div class="view-value">
+                    ₹{{ "%.2f"|format(campaign.budget or 0) }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="view-label">Campaign Status</div>
+
+                <div class="view-value">
+                    {% if campaign.status == "approved" %}
+                        <span class="status-badge bg-success">Approved</span>
+                    {% elif campaign.status == "pending" %}
+                        <span class="status-badge bg-warning text-dark">Pending</span>
+                    {% else %}
+                        <span class="status-badge bg-danger">Rejected</span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- REJECTION REASON -->
+        {% if campaign.status == "rejected" and campaign.rejection_reason %}
+        <div class="mt-3">
+            <div class="view-label">Rejection Reason</div>
+            <div class="view-value text-danger">{{ campaign.rejection_reason }}</div>
+        </div>
+        {% endif %}
+
+        <div class="section-divider"></div>
+
+        <!-- DATES -->
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="view-label">Created At</div>
+                <div class="view-value">{{ campaign.created_at }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="view-label">Start Date</div>
+                <div class="view-value">{{ campaign.start_date or "—" }}</div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="view-label">End Date</div>
+                <div class="view-value">{{ campaign.end_date or "—" }}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

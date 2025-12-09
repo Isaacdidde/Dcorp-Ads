@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Campaigns | Admin Panel{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Campaigns</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover table-bordered mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Campaign ID</th>
+                    <th>Advertiser</th>
+
+                    <!-- ADDED: AD SLOT COLUMN -->
+                    <th>Ad Slot</th>
+
+                    <th>Bidding</th>
+                    <th>Budget</th>
+                    <th>Spent</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if campaigns and campaigns|length > 0 %}
+                    {% for c in campaigns %}
+                    <tr>
+                        <td>{{ c._id }}</td>
+
+                        <td>
+                            {{ c.advertiser_name }}
+                            <br>
+                            <small class="text-muted">{{ c.advertiser_email }}</small>
+                        </td>
+
+                        <!-- ADDED: SHOWING SLOT -->
+                        <td>
+                            {% if c.slot_id %}
+                                <span class="badge bg-info text-dark">{{ c.slot_id }}</span>
+                            {% else %}
+                                <span class="text-muted">Not Assigned</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ c.bidding_type }}
+                            <br>
+                            <small class="text-muted">
+                                ₹{{ c.bid_amount }}
+                                {% if c.bidding_type == "CPM" %}/ 1000{% endif %}
+                            </small>
+                        </td>
+
+                        <td>₹{{ "%.2f"|format(c.budget|float) }}</td>
+                        <td>₹{{ "%.2f"|format(c.spent|float) }}</td>
+
+                        <td>
+                            {% if c.status == "active" %}
+                                <span class="badge bg-success">Active</span>
+
+                            {% elif c.status == "pending_approval" %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+
+                            {% elif c.status == "paused" %}
+                                <span class="badge bg-secondary">Paused</span>
+
+                            {% elif c.status == "rejected" %}
+                                <span class="badge bg-danger">Rejected</span>
+
+                            {% else %}
+                                <span class="badge bg-light text-dark">{{ c.status }}</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            No campaigns available.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

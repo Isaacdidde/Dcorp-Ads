@@ -1,0 +1,19 @@
+Flask==3.0.3
+Flask-Cors==4.0.0
+pymongo==4.8.0
+python-dotenv==1.0.1
+gunicorn==23.0.0
+
+# Security / Auth
+PyJWT==2.8.0
+bcrypt==4.1.2
+
+# Validation
+marshmallow==3.21.1
+
+# For handling time/date operations if used anywhere
+pytz==2024.1
+
+# Optional (only if you're using email-based OTP)
+# smtplib is built-in, but if using external providers:
+# requests==2.32.3

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{% block title %}Dcorp Ads{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrp -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <!-- AOS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
+
+    <!-- Theme -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
+
+    <style>
+/* NAV TOGGLE ICON */
+.nav-toggle-icon {
+  width: 20px;
+  cursor: pointer;
+  margin-left: 16px;
+  opacity: 0.85;
+  transition: 0.2s;
+}
+.nav-toggle-icon:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* ================================
+   FOOTER WAVE BACKGROUND
+================================ */
+.footer-wave {
+  display: block;
+  width: 100%;
+  height: 120px;
+}
+
+footer {
+  background: #fafaff;
+  padding-top: 30px;
+  border-top: 1px solid #e3ddff;
+}
+
+/* ================================
+   FOOTER MAIN SECTION
+================================ */
+.footer-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin: 6px 0;
+}
+
+.footer-links a {
+  color: #555;
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: 0.2s;
+}
+
+.footer-links a:hover {
+  color: #6a00ff;
+  text-decoration: underline;
+}
+
+.footer-network-logo {
+  height: 48px;
+  margin-bottom: 12px;
+}
+
+/* ================================
+   MOBILE COLLAPSIBLE FOOTER
+================================ */
+.footer-collapse-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  width: 100%;
+  text-align: left;
+  font-weight: 700;
+  padding: 10px 0;
+  color: #222;
+}
+
+@media (max-width: 767px) {
+  .footer-desktop-column {
+    display: none;
+  }
+  .footer-collapse-btn {
+    display: block;
+  }
+  .footer-mobile-content {
+    display: none;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+/* ================================
+   BOTTOM LEGAL BAR
+================================ */
+.footer-bottom {
+  background: #f0edff;
+  padding: 14px 0;
+  text-align:center;
+  border-top:1px solid #e1dcff;
+}
+
+.footer-bottom p {
+  margin:0;
+  font-size:0.85rem;
+  color:#555;
+}
+    </style>
+
+    {% block styles %}{% endblock %}
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar bg-white py-2 shadow-sm" style="background: var(--bg-secondary) !important;">
+    <div class="container d-flex justify-content-between align-items-center">
+
+        <!-- LOGO -->
+<a class="navbar-brand d-flex align-items-center fw-bold" 
+   href="/" 
+   style="font-size: 26px; color: var(--primary); letter-spacing: 0.5px;">
+    Dcorp Ads
+</a>
+
+        <!-- RIGHT ACTIONS -->
+        <div class="d-flex align-items-center">
+            <a href="/user/auth/login" class="btn btn-outline-primary me-2 px-4">Sign In</a>
+            <a href="/user/auth/register" class="btn btn-primary px-4 me-2">Register</a>
+
+            <img id="themeToggle" class="nav-toggle-icon"
+                 src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png">
+        </div>
+
+    </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+
+
+<!-- ================================
+           FOOTER
+================================ -->
+<footer>
+
+  <div class="container pb-4">
+
+    <!-- TOP ROW -->
+    <div class="row gy-4">
+
+      <!-- BRAND -->
+      <div class="col-md-4">
+        <img src="{{ url_for('static', filename='image/logo.png') }}"
+             class="footer-network-logo" alt="Dcorp Logo">
+
+        <p style="color:#4b4b60; max-width:280px; font-size:0.95rem;">
+          Dcorp Ads helps businesses grow with intelligent placement,
+          precision targeting, and real-time performance insights.
+        </p>
+      </div>
+
+      <!-- DESKTOP FOOTER COLUMNS -->
+      <div class="col-md-2 footer-desktop-column">
+        <h6 class="footer-section-title">Explore</h6>
+        <ul class="footer-links">
+          <li><a href="/features">Features</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/solutions">Solutions</a></li>
+          <li><a href="/resources">Resources</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-2 footer-desktop-column">
+        <h6 class="footer-section-title">Account</h6>
+        <ul class="footer-links">
+          <li><a href="/user/auth/login">Sign In</a></li>
+          <li><a href="/user/auth/register">Register</a></li>
+          <li><a href="/help">Help Center</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-2 footer-desktop-column">
+        <h6 class="footer-section-title">Company</h6>
+        <ul class="footer-links">
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms & Conditions</a></li>
+          <li><a href="/admin/login" style="color:#6a00ff;">Admin</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-2 footer-desktop-column">
+        <h6 class="footer-section-title">Our Network</h6>
+        <ul class="footer-links">
+          <li><a href="https://timeless-threads.onrender.com" target="_blank">Timeless Threads</a></li>
+          <li><a href="https://securevault.ai" target="_blank">SecureVault</a></li>
+        </ul>
+      </div>
+
+
+      <!-- MOBILE COLLAPSIBLE FOOTER -->
+      <div class="col-12 d-md-none">
+        <!-- Explore -->
+        <button class="footer-collapse-btn" onclick="toggleFooter('explore')">Explore ⬇</button>
+        <div id="footer-explore" class="footer-mobile-content">
+          <ul class="footer-links">
+            <li><a href="/features">Features</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/solutions">Solutions</a></li>
+            <li><a href="/resources">Resources</a></li>
+          </ul>
+        </div>
+
+        <!-- Account -->
+        <button class="footer-collapse-btn" onclick="toggleFooter('account')">Account ⬇</button>
+        <div id="footer-account" class="footer-mobile-content">
+          <ul class="footer-links">
+            <li><a href="/user/auth/login">Sign In</a></li>
+            <li><a href="/user/auth/register">Register</a></li>
+            <li><a href="/help">Help Center</a></li>
+          </ul>
+        </div>
+
+        <!-- Company -->
+        <button class="footer-collapse-btn" onclick="toggleFooter('company')">Company ⬇</button>
+        <div id="footer-company" class="footer-mobile-content">
+          <ul class="footer-links">
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms & Conditions</a></li>
+            <li><a href="/admin/login" style="color:#6a00ff;">Admin</a></li>
+          </ul>
+        </div>
+
+        <!-- Network -->
+        <button class="footer-collapse-btn" onclick="toggleFooter('network')">Our Network ⬇</button>
+        <div id="footer-network" class="footer-mobile-content">
+          <ul class="footer-links">
+            <li><a href="https://timeless-threads.onrender.com" target="_blank">Timeless Threads</a></li>
+            <li><a href="https://securevault.ai" target="_blank">SecureVault</a></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="footer-bottom">
+    <p>© 2025 Dcorp Ads. Empowering digital growth.</p>
+  </div>
+
+</footer>
+
+
+<!-- ================================
+   JS SCRIPTS
+================================ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+AOS.init({ duration: 900, once: true });
+
+/* DARK MODE TOGGLE */
+const body = document.body;
+const toggle = document.getElementById("themeToggle");
+
+const saved = localStorage.getItem("theme");
+if (saved === "dark") {
+  body.classList.add("dark");
+  toggle.src = "https://cdn-icons-png.flaticon.com/512/702/702471.png";
+}
+
+toggle.onclick = () => {
+  body.classList.toggle("dark");
+  const mode = body.classList.contains("dark");
+
+  toggle.src = mode
+    ? "https://cdn-icons-png.flaticon.com/512/702/702471.png"
+    : "https://cdn-icons-png.flaticon.com/512/1828/1828778.png";
+
+  localStorage.setItem("theme", mode ? "dark" : "light");
+};
+
+/* MOBILE FOOTER COLLAPSE LOGIC */
+function toggleFooter(section) {
+  const target = document.getElementById("footer-" + section);
+  if (target.style.display === "block") {
+    target.style.display = "none";
+  } else {
+    target.style.display = "block";
+  }
+}
+</script>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

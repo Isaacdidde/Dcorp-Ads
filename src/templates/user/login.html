@@ -1,0 +1,49 @@
+{% extends "base_public_no_nav.html" %}
+
+{% block title %}Login – Dcorp Ads{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:480px;">
+
+    <!-- USER FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if "user_" in category %}
+          <div class="alert alert-{{ 'danger' if 'error' in category else 'success' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h2 class="text-center mb-4">Sign In</h2>
+
+    <form method="POST" action="/user/auth/login">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Email</label>
+            <input type="email" name="email" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Password</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
+
+        <button class="btn btn-primary w-100">Login</button>
+
+        <div class="text-center mt-3">
+            <a href="/user/auth/register">Create an Account</a>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- BOOTSTRAP CLOSE BUTTON SUPPORT -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

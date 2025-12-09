@@ -1,0 +1,167 @@
+{% extends "admin/layout/base_admin.html" %}
+
+{% block content %}
+<style>
+  .dashboard-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: #eaf1ff;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+  }
+
+  .card {
+    background: rgba(15, 22, 32, 0.9);
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.3);
+    transition: 0.28s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+  }
+
+  .card-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #dce6ff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title i {
+    font-size: 18px;
+    color: #7c5cff;
+  }
+
+  .card-value {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .card-subtext {
+    font-size: 14px;
+    opacity: 0.7;
+  }
+
+  /* Latest campaigns */
+  .campaign-preview {
+    background: #121a27;
+    padding: 14px;
+    border-radius: 12px;
+    margin-top: 12px;
+  }
+
+  .status-badge {
+    background: #3ddc84;
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: #000;
+    font-size: 13px;
+    font-weight: 600;
+    margin-left: 10px;
+  }
+
+  .quick-actions {
+    margin: 20px 0;
+    display: flex;
+    gap: 12px;
+  }
+
+  .quick-actions a {
+    background: #1a2332;
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: #cdd8f8;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+  }
+
+  .quick-actions a:hover {
+    background: #222d3f;
+    color: #ffffff;
+  }
+</style>
+
+<h2 class="dashboard-title">Dashboard Overview</h2>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+  <a href="{{ url_for('admin_panel.campaigns') }}"><i class="fa fa-flag"></i> Review Campaigns</a>
+  <a href="{{ url_for('admin_panel.users') }}"><i class="fa fa-user-plus"></i> Manage Users</a>
+  <a href="{{ url_for('admin_panel.transactions') }}"><i class="fa fa-wallet"></i> View Transactions</a>
+</div>
+
+<div class="grid">
+
+ <!-- Campaigns -->
+<div class="card">
+  <div class="card-title">
+    <i class="fa-solid fa-bullhorn"></i> Campaigns
+  </div>
+
+  <div class="card-value">{{ stats.total_campaigns }}</div>
+
+  <div class="card-subtext">
+    Pending: {{ stats.pending_campaigns }} • 
+    Approved: {{ stats.approved_campaigns }} • 
+    Rejected: {{ stats.rejected_campaigns }}
+  </div>
+</div>
+
+
+  <!-- Advertisers -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-users"></i> Advertisers</div>
+    <div class="card-value">{{ stats.total_advertisers }}</div>
+    <div class="card-subtext">Total Wallet Transactions: {{ stats.transactions }}</div>
+  </div>
+
+  <!-- Impressions -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-eye"></i> Impressions</div>
+    <div class="card-value">{{ stats.impressions }}</div>
+    <div class="card-subtext">Clicks: {{ stats.clicks }} • CTR: {{ stats.ctr }}%</div>
+  </div>
+
+  <!-- Latest Campaigns -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Latest Campaigns</div>
+
+    {% for c in campaigns %}
+    <div class="campaign-preview">
+      <div>
+        <strong>{{ c.title }}</strong>
+        {% if c.status == 'approved' %}
+          <span class="status-badge">Approved</span>
+        {% endif %}
+      </div>
+
+      <div style="font-size: 13px; opacity: 0.7;">
+        {{ c.created_at_str }}
+      </div>
+
+      <a href="{{ url_for('admin_panel.campaigns') }}" style="font-size: 13px; margin-top: 6px; display:block;">
+        Manage →
+      </a>
+    </div>
+    {% endfor %}
+
+  </div>
+</div>
+{% endblock %}

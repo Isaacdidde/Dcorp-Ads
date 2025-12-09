@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Advertisers | Admin Panel{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Advertisers</h2>
+    <a href="/admin/advertisers/new" class="btn btn-primary">New Advertiser</a>
+</div>
+
+<!-- Advertisers Table -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-hover table-bordered mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Company</th>
+                    <th>Wallet</th>
+                    <th>Status</th>
+                    <th style="width: 140px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if advertisers and advertisers|length > 0 %}
+                    {% for adv in advertisers %}
+                    <tr>
+                        <td>{{ adv.name }}</td>
+                        <td>{{ adv.email }}</td>
+                        <td>
+                            {{ adv.company_name }}
+                            <br>
+                            <small class="text-muted">{{ adv.company_website }}</small>
+                        </td>
+                        <td>
+                            ₹{{ "%.2f"|format(adv.wallet_balance) }}
+                        </td>
+                        <td>
+                            {% if adv.status == 'active' %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ adv.status|capitalize }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/admin/advertisers/{{ adv.id }}" class="btn btn-sm btn-outline-primary">View</a>
+                            <a href="/admin/advertisers/{{ adv.id }}/campaigns" class="btn btn-sm btn-outline-dark">Campaigns</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            No advertisers found.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

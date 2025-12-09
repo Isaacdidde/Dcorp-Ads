@@ -1,0 +1,346 @@
+{% extends "admin/layout/base_admin.html" %}
+{% block content %}
+
+<style>
+/* -------------------------------------------------------
+   DARK NEON THEME — MATCHES YOUR EXISTING ADMIN STYLE
+--------------------------------------------------------*/
+.transactions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #eef3ff;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.controls input, .controls select {
+  background: #07111a;
+  border: 1px solid #1b2533;
+  color: #e8f2ff;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.filter-pill {
+  background: #0f1720;
+  border: 1px solid #1f2a39;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #b9c7da;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filter-pill:hover {
+  background: #1a2533;
+}
+.metrics-bar {
+  display: flex;
+  gap: 18px;
+  margin: 16px 0 18px;
+}
+.metric {
+  background: #0c131a;
+  border: 1px solid #18232c;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #cfe5ff;
+  min-width: 150px;
+}
+.table-wrap {
+  background: #07111a;
+  border: 1px solid #16232f;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.tx-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tx-table th, .tx-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #0f1a24;
+  color: #dbeeff;
+  font-size: 14px;
+}
+.tx-tag {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+.tx-tag.credit, .tx-tag.wallet_topup {
+  background: #d3f4d9; color: #062c09;
+}
+.tx-tag.debit, .tx-tag.campaign_budget_assigned {
+  background: #ffd6d6; color: #3a0000;
+}
+.tx-tag.refund_campaign_rejected {
+  background: #cfe9ff; color: #002840;
+}
+.tx-tag.other {
+  background: #dadada; color: #111;
+}
+
+.expand-row {
+  background: #06111a;
+  color: #9fbfd9;
+  padding: 10px 16px;
+  display: none;
+}
+.row-actions button {
+  background: #1c2837;
+  border: 1px solid #2d3b4d;
+  color: #dbeeff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* pagination */
+.pager {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.pager button {
+  background: #0b1319;
+  border: 1px solid #1e2b39;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #dbeeff;
+  cursor: pointer;
+}
+.pager button.active {
+  background: linear-gradient(90deg, #7c5cff, #4fa3ff);
+  color: black;
+}
+
+/* responsive */
+@media(max-width:900px){
+  .controls { flex-direction: column; align-items: stretch; }
+}
+</style>
+
+
+<!-- =========================================================
+     PAGE HEADER + FILTER CONTROLS
+========================================================= -->
+<div class="transactions-header">
+  <div>
+    <div class="page-title">Transactions</div>
+    <div style="color:#9fbfd9; font-size:13px; margin-top:6px;">
+      Filter, inspect & export all wallet and campaign-related transactions.
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="q" placeholder="Search email, name, user id or message"
+           value="{{ request.args.get('q','') }}">
+
+    <select id="tx_type">
+      <option value="">All types</option>
+      {% for t in distinct_types %}
+        <option value="{{ t }}" {% if request.args.get('type') == t %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+
+    <input type="date" id="from" value="{{ request.args.get('from','') }}">
+    <input type="date" id="to" value="{{ request.args.get('to','') }}">
+
+    <button class="filter-pill" id="applyFilters">Apply</button>
+
+    <!-- EXPORT -->
+    <div style="position:relative;">
+      <button class="filter-pill" id="exportBtn">Export ▼</button>
+      <div id="exportMenu"
+           style="display:none; position:absolute; right:0; background:#071421; border:1px solid #2a3a4f; border-radius:8px;">
+        <div class="export-item" data-format="csv"
+             style="padding:10px 14px; cursor:pointer; color:#dbeeff;">Download CSV</div>
+        <div class="export-item" data-format="xlsx"
+             style="padding:10px 14px; cursor:pointer; color:#dbeeff;">Download XLSX</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     METRICS BAR
+========================================================= -->
+<div class="metrics-bar">
+  <div class="metric">
+    <div style="font-size:12px;color:#8faac3;">Total Credit</div>
+    <div style="font-size:20px; font-weight:700;">₹{{ total_credit }}</div>
+  </div>
+
+  <div class="metric">
+    <div style="font-size:12px;color:#8faac3;">Total Debit</div>
+    <div style="font-size:20px; font-weight:700;">₹{{ total_debit }}</div>
+  </div>
+
+  <div class="metric">
+    <div style="font-size:12px;color:#8faac3;">Net</div>
+    <div style="font-size:20px; font-weight:700;">₹{{ net }}</div>
+  </div>
+
+  <div style="flex:1;"></div>
+
+  <div style="color:#9fbfd9; font-size:13px;">
+    Showing page {{ pagination.page }} of {{ pagination.total_pages }} —
+    {{ pagination.total }} records
+  </div>
+</div>
+
+
+<!-- =========================================================
+     TABLE
+========================================================= -->
+<div class="table-wrap">
+  <table class="tx-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Campaign</th>
+        <th>Message</th>
+        <th>Date (IST)</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for t in txs %}
+      {% set tx_type = (t.transaction_type or 'other')|lower %}
+      <tr>
+        <td>{{ t.user_email }}</td>
+
+        <td><span class="tx-tag {{ tx_type }}">{{ tx_type.replace('_',' ') }}</span></td>
+
+        <td>₹{{ "%.2f"|format(t.amount|float) }}</td>
+
+        <td>{{ t.campaign_name or "-" }}</td>
+
+        <td style="max-width:350px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+          {{ t.message }}
+        </td>
+
+        <td>{{ t.created_at_str }}</td>
+
+        <td class="row-actions">
+          <button onclick="toggleDetail('{{ t._id }}')">▾ details</button>
+        </td>
+      </tr>
+
+      <!-- Expandable detail row -->
+      <tr id="detail-{{ t._id }}" class="expand-row">
+        <td colspan="7">
+          <b>Transaction ID:</b> {{ t._id }}<br>
+          <b>Raw JSON:</b>
+          <pre style="white-space:pre-wrap; margin-top:6px;">{{ t | tojson(indent=2) }}</pre>
+
+          <div style="margin-top:8px;">
+            <a href="{{ url_for('admin_panel.users') }}"
+               style="color:#7c5cff;font-weight:700;text-decoration:none;">
+              View User →
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<!-- =========================================================
+     PAGINATION
+========================================================= -->
+<div class="pager">
+  {% if pagination.page > 1 %}
+  <button onclick="gotoPage({{ pagination.page - 1 }})">Prev</button>
+  {% endif %}
+
+  {% for p in range(pagination.page-2, pagination.page+3) %}
+    {% if p > 0 and p <= pagination.total_pages %}
+      <button onclick="gotoPage({{ p }})"
+              class="{{ 'active' if p == pagination.page else '' }}">{{ p }}</button>
+    {% endif %}
+  {% endfor %}
+
+  {% if pagination.page < pagination.total_pages %}
+  <button onclick="gotoPage({{ pagination.page + 1 }})">Next</button>
+  {% endif %}
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT (CLEAN + FIXED)
+========================================================= -->
+<script>
+function toggleDetail(id) {
+  const row = document.getElementById("detail-" + id);
+  if (!row) return;
+  row.style.display = row.style.display === "table-row" ? "none" : "table-row";
+}
+
+document.getElementById("applyFilters").onclick = function () {
+  applyFilters();
+};
+
+function applyFilters(page = 1) {
+  let url = new URL(window.location.href);
+
+  url.searchParams.set("q", document.getElementById("q").value);
+  url.searchParams.set("type", document.getElementById("tx_type").value);
+  url.searchParams.set("from", document.getElementById("from").value);
+  url.searchParams.set("to", document.getElementById("to").value);
+  url.searchParams.set("page", page);
+  url.searchParams.set("per_page", {{ pagination.per_page }});
+
+  window.location = url.toString();
+}
+
+function gotoPage(p) {
+  applyFilters(p);
+}
+
+/* -------------------
+   EXPORT MENU
+----------------------*/
+const exportMenu = document.getElementById("exportMenu");
+document.getElementById("exportBtn").onclick = () => {
+  exportMenu.style.display =
+    exportMenu.style.display === "block" ? "none" : "block";
+};
+
+document.querySelectorAll(".export-item").forEach(el => {
+  el.onclick = () => exportData(el.dataset.format);
+});
+
+function exportData(fmt) {
+  let url = new URL(window.location.href);
+  url.searchParams.set("export", fmt);
+  window.location = url;
+}
+
+// close export menu on outside click
+document.addEventListener("click", function (e) {
+  if (!exportMenu.contains(e.target) &&
+      e.target.id !== "exportBtn") {
+    exportMenu.style.display = "none";
+  }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "user/layout/base_user.html" %}
+
+{% block title %}Set Bid – Dcorp Ads{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 mb-3">
+      <h5>Set Bid</h5>
+      <div class="text-muted">Configure how you want to bid for clicks or impressions.</div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-4">
+        {% if campaign %}
+          <h6>{{ campaign.title }}</h6>
+          <div class="mb-3 text-muted">{{ campaign.product_name }}</div>
+        {% endif %}
+
+        <form method="POST" action="">
+          <div class="mb-3">
+            <label class="form-label">Bid Type</label>
+            <select name="bid_type" class="form-control">
+              <option value="cpc">Manual CPC (per click)</option>
+              <option value="cpm">Manual CPM (per 1000 impressions)</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Bid Amount (₹)</label>
+            <input name="amount" class="form-control" type="number" step="0.01" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Daily Limit (₹)</label>
+            <input name="daily_limit" class="form-control" type="number" step="0.01">
+          </div>
+
+          <button class="btn btn-primary">Save Bid</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "user/layout/base_user.html" %}
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4" style="max-width: 600px;">
+
+    <h3 class="fw-bold mb-3">Account Settings</h3>
+
+    <form action="{{ url_for('user_settings.settings_update') }}" method="POST" enctype="multipart/form-data">
+
+        <div class="card p-4 shadow-sm">
+
+            <!-- Name -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Full Name</label>
+                <input type="text" name="name" class="form-control"
+                       value="{{ user.name }}">
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">New Password</label>
+                <input type="password" name="password" class="form-control"
+                       placeholder="Enter new password (optional)">
+            </div>
+
+            <!-- Profile Image -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Profile Picture</label><br>
+
+               <img src="{{ user.profile_pic or '/static/image/default_user.png' }}"
+     class="rounded-circle mb-3"
+     width="100" height="100"
+     style="object-fit: cover; border: 2px solid #ddd;">
+
+
+                <input type="file" name="profile_image" class="form-control">
+            </div>
+
+            <button class="btn btn-primary w-100">Save Changes</button>
+
+        </div>
+    </form>
+</div>
+
+{% endblock %}

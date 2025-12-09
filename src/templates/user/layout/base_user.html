@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/user_dashboard.css') }}">
+</head>
+
+<style>
+/* ===================== Flash Messages ===================== */
+
+.flash-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    width: 100%;
+    max-width: 680px;
+    pointer-events: none;
+}
+
+.flash-box {
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: auto;
+    animation: fadeSlideIn 0.35s ease-out;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.flash-success {
+    background: linear-gradient(135deg, #1ecb7c, #0da45e);
+    color: white;
+}
+
+.flash-danger, .flash-error {
+    background: linear-gradient(135deg, #ff5a5a, #d43c3c);
+    color: white;
+}
+
+.flash-warning {
+    background: linear-gradient(135deg, #f7c240, #e0a21c);
+    color: #2f2f2f;
+}
+
+.flash-info {
+    background: linear-gradient(135deg, #4a90e2, #3479c4);
+    color: white;
+}
+
+.flash-close {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.flash-close:hover {
+    opacity: 1;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translate(-50%, -10px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Force sidebar links always clickable */
+.sidebar a {
+    position: relative;
+    z-index: 10;
+}
+
+/* ===================== Logout Modal ===================== */
+.confirm-modal {
+    display: none;
+    position: fixed;
+    z-index: 20000;
+    top: 0;
+    left: 0;
+    right:0;
+    bottom:0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 320px;
+    text-align: center;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+}
+
+</style>
+
+<body>
+
+<!-- ===================== TOP NAVBAR ===================== -->
+<nav class="top-navbar">
+    <div class="left">
+        <button id="toggleSidebar" class="toggle-btn">&#9776;</button>
+        <span class="brand">Dcorp Ads</span>
+    </div>
+
+    <div class="user-box">
+
+        <!-- FIXED: Correct field is profile_image -->
+        <img src="{{ user_info.profile_image or '/static/image/default_user.png' }}"
+             class="user-avatar">
+
+        <div class="user-info">
+            <div class="user-name">{{ user_info.name }}</div>
+            <div class="user-email">{{ user_info.email }}</div>
+        </div>
+
+    </div>
+</nav>
+
+
+<!-- ===================== FLASHES ===================== -->
+<div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-box flash-{{ category }}">
+                    <span>{{ message }}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+
+<!-- ===================== LAYOUT ===================== -->
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+        <ul>
+
+            <li>
+                <a href="{{ url_for('user_dashboard.dashboard') }}">
+                    <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('campaign.campaigns_list') }}">
+                    <i class="fa-solid fa-layer-group"></i><span>Campaigns</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('user_wallet.wallet_page') }}">
+                    <i class="fa-solid fa-wallet"></i><span>Wallet</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('user_billing.billing_page') }}">
+                    <i class="fa-solid fa-file-invoice"></i><span>Billing</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('user_settings.settings_page') }}">
+                    <i class="fa-solid fa-gear"></i><span>Settings</span>
+                </a>
+            </li>
+
+            <!-- Working logout -->
+            <li>
+                <a href="javascript:void(0)" onclick="openLogoutModal()">
+                    <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                </a>
+            </li>
+
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="mainContent" class="content-area">
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
+
+
+<!-- ===================== LOGOUT MODAL ===================== -->
+<div id="logoutConfirmModal" class="confirm-modal">
+    <div class="confirm-box">
+        <p>Are you sure you want to logout?</p>
+
+        <div class="confirm-actions">
+            <button class="btn btn-danger" onclick="confirmLogout()">Yes, Logout</button>
+            <button class="btn btn-secondary" onclick="closeLogoutModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===================== JS ===================== -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("toggleSidebar");
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("mainContent");
+
+    toggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        content.classList.toggle("collapsed");
+    });
+});
+
+function openLogoutModal() {
+    console.log("Logout modal opened");
+    document.getElementById("logoutConfirmModal").style.display = "flex";
+}
+
+function closeLogoutModal() {
+    document.getElementById("logoutConfirmModal").style.display = "none";
+}
+
+function confirmLogout() {
+    window.location.href = "{{ url_for('user_auth.logout_user') }}";
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

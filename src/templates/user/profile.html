@@ -1,0 +1,58 @@
+{% extends "user/layout/base_user.html" %}
+{% block title %}Your Profile – Dcorp Ads{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 640px;">
+
+  <h3 class="mb-4">Your Profile</h3>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        {% if "user_" in category %}
+          <div class="alert alert-{{ 'success' if 'success' in category else 'danger' }} alert-dismissible fade show">
+            {{ message }}
+            <button class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Profile Card -->
+  <div class="card shadow-sm p-4">
+
+    <div class="text-center mb-4">
+      <img src="{{ user_info.profile_image or '/static/image/default_avatar.png' }}"
+           class="rounded-circle"
+           style="width:120px; height:120px; object-fit:cover; border:3px solid #ddd;">
+    </div>
+
+    <!-- Upload Photo -->
+    <form method="POST" action="/user/profile/upload" enctype="multipart/form-data" class="mb-4">
+      <label class="form-label fw-semibold">Update Profile Picture</label>
+      <div class="d-flex gap-2">
+        <input type="file" name="photo" class="form-control" required>
+        <button class="btn btn-primary">Upload</button>
+      </div>
+    </form>
+
+    <!-- Update Profile Info -->
+    <form method="POST" action="/user/profile/update">
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Full Name</label>
+        <input type="text" name="name" value="{{ user_info.name }}" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Email</label>
+        <input type="email" name="email" value="{{ user_info.email }}" class="form-control" required>
+      </div>
+
+      <button class="btn btn-success w-100">Save Changes</button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

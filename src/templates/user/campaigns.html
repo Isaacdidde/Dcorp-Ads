@@ -1,0 +1,228 @@
+{% extends "user/layout/base_user.html" %} {% block title %}My Campaigns{%
+endblock %} {% block content %}
+
+<style>
+  .campaign-card {
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bs-body-bg);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+  }
+  .campaign-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+  .camp-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: #f8f9fa;
+  }
+  .camp-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .camp-meta {
+    font-size: 0.85rem;
+    color: gray;
+  }
+</style>
+
+<div class="container-fluid px-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold">Campaigns</h3>
+
+    <div>
+      <select
+        id="sortSelect"
+        class="form-select form-select-sm"
+        style="width: 180px; display: inline-block"
+      >
+        <option value="new">Newest First</option>
+        <option value="old">Oldest First</option>
+        <option value="pending">Pending First</option>
+        <option value="approved">Approved First</option>
+        <option value="rejected">Rejected First</option>
+      </select>
+
+      <a
+        href="{{ url_for('campaign.create_campaign_page') }}"
+        class="btn btn-primary btn-sm ms-2"
+        >+ New Campaign</a
+      >
+    </div>
+  </div>
+
+  {% if campaigns|length == 0 %}
+  <div class="alert alert-info">No campaigns available.</div>
+  {% endif %}
+
+  <div class="row" id="campaignList">
+    {% for c in campaigns %}
+    <div
+      class="col-md-6 col-lg-4 mb-4 campaign-item"
+      data-status="{{ c.status }}"
+      data-date="{{ c.created_at or '' }}"
+    >
+      <div class="campaign-card">
+        {% if c.creative_image %}
+        <img src="{{ c.creative_image }}" class="camp-img" />
+        {% else %}
+        <img src="/static/defaults/no-image.png" class="camp-img" />
+        {% endif %}
+
+        <div class="p-3">
+          <div class="camp-title">{{ c.title or "Untitled Campaign" }}</div>
+
+          <!-- Product name (added earlier) -->
+          <div class="camp-meta">
+            Product:
+            <span class="text-dark"
+              >{{ c.product_name or "Not specified" }}</span
+            >
+          </div>
+
+          <div class="camp-meta">
+            Slot:
+            <span class="text-primary">
+              {{ (c.slot_id or "") | replace("_", " ") | title }}
+            </span>
+          </div>
+
+          <div class="camp-meta">
+            {{ c.bidding_type or "CPC" }} — ₹{{ c.bid_amount or 0 }} {% if
+            c.bidding_type == "CPM" %}/1000{% endif %}
+          </div>
+
+          <div class="camp-meta">
+            Budget: ₹{{ c.budget or c.total_budget or 0 }}
+          </div>
+
+          <div class="mt-2">
+            {% if c.status == "approved" %}
+            <span class="badge bg-success">Approved</span>
+            {% elif c.status == "rejected" %}
+            <span class="badge bg-danger">Rejected</span>
+            {% else %}
+            <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </div>
+
+          <hr />
+
+          <div class="d-flex justify-content-between">
+            <a
+              href="{{ url_for('campaign.view_campaign', cid=c._id) }}"
+              class="btn btn-outline-primary btn-sm"
+              >View</a
+            >
+
+            {% if c.status != "rejected" %}
+            <a
+              href="{{ url_for('campaign.edit_campaign_page', cid=c._id) }}"
+              class="btn btn-primary btn-sm"
+              >Edit</a
+            >
+            {% endif %}
+
+            <button
+              class="btn btn-outline-danger btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal{{ c._id }}"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% for c in campaigns %}
+<div class="modal fade" id="deleteModal{{ c._id }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Campaign</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        This campaign will be permanently deleted.<br />
+        <strong>Are you sure?</strong>
+      </div>
+
+      <div class="modal-footer">
+        <form
+          action="{{ url_for('campaign.delete_campaign', cid=c._id) }}"
+          method="POST"
+        >
+          <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        </form>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<script>
+  const sortSelect = document.getElementById("sortSelect");
+  const list = document.getElementById("campaignList");
+
+  function getPriority(status, mode) {
+    if (mode === "pending") {
+      return status === "pending" ? 0 : 1;
+    }
+    if (mode === "approved") {
+      return status === "approved" ? 0 : 1;
+    }
+    if (mode === "rejected") {
+      return status === "rejected" ? 0 : 1;
+    }
+    return 0; // For new/old sorting
+  }
+
+  function sortCampaigns() {
+    let items = Array.from(document.querySelectorAll(".campaign-item"));
+    let mode = sortSelect.value;
+
+    items.sort((a, b) => {
+      let da = new Date(a.dataset.date).getTime();
+      let db = new Date(b.dataset.date).getTime();
+
+      let sa = a.dataset.status;
+      let sb = b.dataset.status;
+
+      // Status-based prioritized ordering
+      if (["pending", "approved", "rejected"].includes(mode)) {
+        let pa = getPriority(sa, mode);
+        let pb = getPriority(sb, mode);
+
+        if (pa !== pb) return pa - pb;
+        return db - da; // secondary sort: newest
+      }
+
+      // Normal date sorts
+      if (mode === "new") return db - da;
+      if (mode === "old") return da - db;
+
+      return 0;
+    });
+
+    list.innerHTML = "";
+    items.forEach((i) => list.appendChild(i));
+  }
+
+  sortSelect.addEventListener("change", sortCampaigns);
+  sortCampaigns(); // initial run
+</script>
+
+{% endblock %}

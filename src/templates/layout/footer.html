@@ -1,0 +1,121 @@
+<footer class="footer-main" style="margin-top:80px; background:#fafaff; border-top:1px solid #e4e0ff;">
+  <div class="container py-5">
+
+    <!-- TOP SECTION -->
+    <div class="row gy-4">
+
+      <!-- BRAND COLUMN -->
+      <div class="col-md-4">
+        <div class="d-flex align-items-center mb-3">
+          <img src="{{ url_for('static', filename='image/logo.png') }}"
+               alt="Dcorp Logo"
+               style="height:48px;">
+        </div>
+
+        <p style="color:#4b4b60; max-width:280px; font-size:0.95rem;">
+          Dcorp Ads helps businesses grow with intelligent placement, smart bidding,
+          and real-time performance insights.
+        </p>
+      </div>
+
+      <!-- FEATURE LINKS -->
+      <div class="col-md-2">
+        <h6 class="footer-heading">Explore</h6>
+        <ul class="footer-links">
+          <li><a href="/features">Features</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/solutions">Solutions</a></li>
+          <li><a href="/resources">Resources</a></li>
+        </ul>
+      </div>
+
+      <!-- ACCOUNT LINKS -->
+      <div class="col-md-2">
+        <h6 class="footer-heading">Account</h6>
+        <ul class="footer-links">
+          <li><a href="/user/auth/login">Sign In</a></li>
+          <li><a href="/user/auth/register">Register</a></li>
+          <li><a href="/help">Help Center</a></li>
+        </ul>
+      </div>
+
+      <!-- COMPANY LINKS -->
+      <div class="col-md-2">
+        <h6 class="footer-heading">Company</h6>
+        <ul class="footer-links">
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms & Conditions</a></li>
+          <li><a href="/admin/login" style="color:#6a00ff;">Admin</a></li>
+        </ul>
+      </div>
+
+      <!-- NETWORK LINKS -->
+      <div class="col-md-2">
+        <h6 class="footer-heading">Our Network</h6>
+        <ul class="footer-links">
+          <li><a href="https://timeless-threads.onrender.com" target="_blank">Timeless Threads</a></li>
+          <li><a href="https://securevault.ai" target="_blank">SecureVault</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="footer-bottom">
+    <p>© 2025 Dcorp Ads. Empowering digital growth.</p>
+  </div>
+
+  <style>
+    /* FOOTER STYLES */
+
+.footer-main {
+  background: #fafaff;
+}
+
+.footer-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #1a1a33;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin: 6px 0;
+}
+
+.footer-links a {
+  color: #4b4b60;
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: 0.2s;
+}
+
+.footer-links a:hover {
+  color: #6a00ff;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  background: #f0edff;
+  padding: 14px 0;
+  text-align:center;
+  border-top:1px solid #e1dcff;
+}
+
+.footer-bottom p {
+  margin:0;
+  font-size:0.85rem;
+  color:#555;
+}
+
+  </style>
+</footer>

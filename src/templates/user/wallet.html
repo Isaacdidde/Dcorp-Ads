@@ -1,0 +1,155 @@
+{% extends "user/layout/base_user.html" %}
+{% block title %}Wallet{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* CARD LOOK */
+.wallet-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 25px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* BALANCE TEXT */
+.balance-amount {
+    font-size: 40px;
+    font-weight: 700;
+    color: #222;
+}
+
+/* TRANSACTION TABLE */
+.tx-table th {
+    background: #f8f9fc;
+    font-weight: 600;
+}
+
+.tx-credit {
+    color: #1cbf57;
+    font-weight: 600;
+}
+
+.tx-debit {
+    color: #e63946;
+    font-weight: 600;
+}
+
+/* REF ID COPY */
+.copy-btn {
+    cursor: pointer;
+    color: #007bff;
+    font-size: 13px;
+}
+.copy-btn:hover {
+    text-decoration: underline;
+}
+
+/* ALERTS */
+.low-balance-alert {
+    border-left: 4px solid #ff9800;
+}
+
+.paused-alert {
+    border-left: 4px solid #e63946;
+}
+
+</style>
+
+
+<div class="container mt-4">
+
+    <h3 class="fw-bold mb-3">Wallet</h3>
+
+    {% if low_balance %}
+    <div class="alert alert-warning low-balance-alert">
+        ⚠ Your balance is low. Add money to avoid ad interruptions.
+    </div>
+    {% endif %}
+
+    {% if paused %}
+    <div class="alert alert-danger paused-alert">
+        🚫 Campaigns have been auto-paused due to insufficient balance.
+    </div>
+    {% endif %}
+
+    <!-- ================= WALLET CARD ================= -->
+    <div class="wallet-card mb-4">
+        <h6 class="text-muted">Available Balance</h6>
+        <div class="balance-amount">₹{{ "%.2f"|format(balance) }}</div>
+
+        <form method="POST" action="{{ url_for('user_wallet.wallet_add') }}" class="mt-3">
+            <div class="input-group">
+                <input type="number" class="form-control" name="amount" placeholder="Enter amount" min="1">
+                <button class="btn btn-primary">Add Money</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ================ TRANSACTION HISTORY ================ -->
+    <h5 class="fw-bold mb-3">Recent Transactions</h5>
+
+    <div class="wallet-card">
+        {% if txs|length == 0 %}
+          <p class="text-muted">No transactions yet.</p>
+        {% else %}
+          <div class="table-responsive">
+            <table class="table tx-table align-middle">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Reference ID</th>
+                        <th>Reason</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for t in txs %}
+                    <tr>
+
+                        <!-- FIXED TYPE DISPLAY -->
+                        <td>
+                            <span class="tx-{{ t.display_type|lower }}">
+                                {{ t.display_type }}
+                            </span>
+                        </td>
+
+                        <!-- FIXED AMOUNT DISPLAY -->
+                        <td>
+                            <span class="tx-{{ t.display_type|lower }}">
+                                {{ t.display_symbol }} ₹{{ t.amount }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span id="ref-{{ loop.index }}">{{ t.ref_id }}</span>
+                            <span class="copy-btn" onclick="copyRef('{{ loop.index }}')">Copy</span>
+                        </td>
+
+                        <!-- ⭐ UPDATED: SHOW REASON LABEL -->
+                        <td>{{ t.reason_label }}</td>
+
+                        <td>{{ t.created_at_str }}</td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+function copyRef(id) {
+    const text = document.getElementById("ref-" + id).innerText;
+    navigator.clipboard.writeText(text);
+    alert("Reference ID copied: " + text);
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "user/layout/base_user.html" %}
+
+{% block title %}Create Campaign – Dcorp Ads{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="col-12">
+      <h4>Create Campaign</h4>
+      <p class="text-muted">
+        Create a new advertising campaign, choose an ad placement slot, set your bidding details, and upload a creative.
+      </p>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card p-4">
+
+        <!-- FORM START -->
+        <form method="POST" action="{{ url_for('campaign.create_campaign') }}"
+              enctype="multipart/form-data">
+
+          <!-- TITLE -->
+          <div class="mb-3">
+            <label class="form-label">Campaign Title</label>
+            <input name="title" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+    <label class="form-label">Product Name</label>
+    <input name="product_name" class="form-control" required>
+</div>
+
+          <!-- END PRODUCT NAME -->
+
+          <!-- SLOT SELECTION -->
+          <div class="mb-3">
+            <label class="form-label">Ad Placement Slot</label>
+            <select name="slot_id" class="form-select" required>
+              <option value="" disabled selected>Select Slot</option>
+              <option value="home_banner">Homepage Banner (1920×500)</option>
+              <option value="featured_banner">Featured Banner (1600×450)</option>
+              <option value="card_small">Small Card Ads – Product Grid (1000×1000)</option>
+              <option value="product_inline">Inline Ads – Product Listing (1000×1000)</option>
+              <option value="product_detail_banner">Product Detail Page Banner (1920×450)</option>
+              <option value="login_page_ad">Login/Register Page Ad (1080×650)</option>
+            </select>
+            <div class="form-text">Choose where users will see your ad on TT.</div>
+          </div>
+
+          <!-- BIDDING -->
+          <div class="mb-3 row">
+
+            <div class="col-md-6">
+              <label class="form-label">Bidding Type</label>
+              <select name="bidding_type" class="form-select" required>
+                <option value="CPC">CPC – Cost Per Click</option>
+                <option value="CPM">CPM – Cost Per 1000 Impressions</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Bid Amount (₹)</label>
+              <input name="bid_amount" type="number" step="0.01" min="0"
+                     class="form-control" required>
+            </div>
+
+          </div>
+
+          <!-- BUDGET + DATES -->
+          <div class="mb-3 row">
+
+            <div class="col-md-4">
+              <label class="form-label">Total Budget (₹)</label>
+              <input name="budget" type="number" step="0.01" min="1"
+                     class="form-control" required>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Start Date</label>
+              <input name="start_date" type="date" class="form-control" required>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">End Date</label>
+              <input name="end_date" type="date" class="form-control" required>
+            </div>
+
+          </div>
+
+          <hr>
+
+          <!-- CREATIVE UPLOAD -->
+          <h5 class="mb-3">Ad Creative</h5>
+
+          <div class="mb-3">
+            <label class="form-label">Upload Creative Image</label>
+            <input name="ad_image" type="file" accept="image/*"
+                   class="form-control" required>
+            <div class="form-text">
+              Follow recommended dimensions based on the slot selected.
+            </div>
+          </div>
+
+          <!-- REDIRECT URL -->
+          <div class="mb-3">
+            <label class="form-label">Redirect URL</label>
+            <input name="redirect_url" class="form-control"
+                   placeholder="https://your-website.com/product-page" required>
+          </div>
+
+          <!-- HEADLINE -->
+          <div class="mb-3">
+            <label class="form-label">Ad Headline</label>
+            <input name="headline" maxlength="120" class="form-control">
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="mb-3">
+            <label class="form-label">Ad Description</label>
+            <textarea name="description" rows="3" class="form-control"></textarea>
+          </div>
+
+          <!-- SUBMIT -->
+          <button class="btn btn-primary">Create Campaign</button>
+
+        </form>
+        <!-- FORM END -->
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

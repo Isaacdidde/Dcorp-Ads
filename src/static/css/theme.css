@@ -1,0 +1,77 @@
+/* ---------------------------------------------------
+   LIGHT THEME (DEFAULT)
+----------------------------------------------------*/
+:root {
+  --bg: #fafafa;
+  --bg-secondary: #ffffff;
+  --text: #111111;
+  --text-muted: #555;
+  --primary: #0066ff;
+  --primary-hover: #0052cc;
+  --border: #e6e6e6;
+  --card-shadow: rgba(0,0,0,0.08);
+}
+
+/* ---------------------------------------------------
+   DARK THEME
+----------------------------------------------------*/
+.dark {
+  --bg: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --text: #f5f5f5;
+  --text-muted: #bbbbbb;
+  --primary: #4c8dff;
+  --primary-hover: #266dff;
+  --border: #333;
+  --card-shadow: rgba(255,255,255,0.06);
+}
+
+/* ---------------------------------------------------
+   GLOBAL STYLES (AUTO APPLIES VARIABLES)
+----------------------------------------------------*/
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+.card, .feature-card, .pricing-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px var(--card-shadow);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.navbar, footer {
+  background: var(--bg-secondary) !important;
+}
+
+a, p, h1, h2, h3, h4 {
+  color: var(--text);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Button styling */
+.btn-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary);
+  color: #fff;
+}

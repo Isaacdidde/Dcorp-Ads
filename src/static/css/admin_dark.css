@@ -1,0 +1,128 @@
+/* GENERAL */
+body {
+    margin: 0;
+    background: #0D1117;
+    font-family: 'Inter', sans-serif;
+    color: #f1f5f9;
+}
+
+a { color: #8ab4ff; text-decoration: none; }
+
+/* SIDEBAR */
+.admin-sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: #0F1620;
+    padding: 25px;
+    box-shadow: 3px 0 12px rgba(0,0,0,0.4);
+}
+
+.brand {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 35px;
+}
+.brand span { color: #7c5cff; }
+
+.menu { list-style: none; padding: 0; }
+.menu li { margin-bottom: 20px; }
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: #d5dcee;
+    padding: 10px 8px;
+    border-radius: 6px;
+}
+.menu a:hover {
+    background: #1e2735;
+}
+.logout { color: #ff7777 !important; }
+
+.footer {
+    position: absolute;
+    bottom: 20px;
+    font-size: 13px;
+    opacity: 0.5;
+}
+
+/* MAIN AREA */
+.admin-main {
+    margin-left: 240px;
+    padding: 20px 40px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.search-bar {
+    width: 320px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #1a2332;
+    border: none;
+    color: white;
+}
+.search-bar:focus { outline: 2px solid #7c5cff; }
+
+.page-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+}
+
+.card {
+    background: #0F1A27;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.4);
+}
+
+.stat-card .stat {
+    font-size: 38px;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.last-card {
+    grid-column: span 1;
+}
+
+.campaign-item {
+    background: #1c2534;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+.status.approved { background: #3BB54A; }
+.status.pending { background: #EAB308; }
+.status.rejected { background: #EF4444; }
+
+/* FOOTER */
+.admin-footer {
+    margin-top: 50px;
+    text-align: c
+}

@@ -1,0 +1,40 @@
+{% extends "user/layout/base_user.html" %}
+
+{% block title %}Request Placement – Dcorp Ads{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 mb-3">
+      <h5>Request Placement</h5>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-4">
+        {% if campaign %}
+          <h6>{{ campaign.title }}</h6>
+          <div class="mb-3 text-muted">{{ campaign.product_name }}</div>
+        {% endif %}
+
+        <form method="POST" action="">
+          <div class="mb-3">
+            <label class="form-label">Choose placement</label>
+            <select name="placement" class="form-control" required>
+              {% for val, label in options %}
+                <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Optional note for admin</label>
+            <textarea name="note" class="form-control" rows="3"></textarea>
+          </div>
+
+          <button class="btn btn-primary">Request Placement</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

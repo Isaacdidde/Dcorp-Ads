@@ -1,0 +1,141 @@
+<!-- FOOTER MAIN SECTION -->
+<footer style="background:#fafaff; border-top:1px solid #e3ddff;">
+
+  <div class="container py-5">
+
+    <div class="row gy-4">
+
+      <!-- BRAND -->
+      <div class="col-md-4">
+        <img src="{{ url_for('static', filename='image/logo.png') }}"
+             alt="Dcorp Logo"
+             style="height:48px; margin-bottom:12px;">
+
+        <p style="color:#4b4b60; max-width:280px; font-size:0.95rem;">
+          Dcorp Ads helps businesses grow with intelligent placement,
+          precision targeting, and real-time performance insights.
+        </p>
+      </div>
+
+      <!-- DESKTOP COLUMNS -->
+      <div class="col-md-2 footer-desktop-column">
+        <h6 class="footer-section-title">Explore</h6>
+        <ul class="footer-links">
+          <li><a href="/features">Features</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/solutions">Solutions</a></li>
+          <li><a href="/resources">Resources</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-2 footer-desktop-column">
+        <h6 class="footer-section-title">Account</h6>
+        <ul class="footer-links">
+          <li><a href="/user/auth/login">Sign In</a></li>
+          <li><a href="/user/auth/register">Register</a></li>
+          <li><a href="/help">Help Center</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-2 footer-desktop-column">
+       <h6 class="footer-section-title">Company</h6>
+<ul class="footer-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about">About Us</a></li>
+    <li><a href="/privacy">Privacy Policy</a></li>
+    <li><a href="/terms">Terms & Conditions</a></li>
+    <li><a href="/admin/login" style="color:#6a00ff;">Admin</a></li>
+</ul>
+
+      </div>
+
+      <div class="col-md-2 footer-desktop-column">
+        <h6 class="footer-section-title">Our Network</h6>
+        <ul class="footer-links">
+          <li><a href="https://timeless-threads.onrender.com" target="_blank">Timeless Threads</a></li>
+          <li><a href="https://securevault.ai" target="_blank">SecureVault</a></li>
+        </ul>
+      </div>
+
+
+      <!-- MOBILE COLLAPSIBLE FOOTER -->
+      <div class="col-12 d-md-none">
+
+        <!-- Explore -->
+        <button class="footer-collapse-btn" onclick="toggleFooter('explore')">
+          Explore ⬇
+        </button>
+        <div id="footer-explore" class="footer-mobile-content">
+          <ul class="footer-links">
+            <li><a href="/features">Features</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/solutions">Solutions</a></li>
+            <li><a href="/resources">Resources</a></li>
+          </ul>
+        </div>
+
+        <!-- Account -->
+        <button class="footer-collapse-btn" onclick="toggleFooter('account')">
+          Account ⬇
+        </button>
+        <div id="footer-account" class="footer-mobile-content">
+          <ul class="footer-links">
+            <li><a href="/user/auth/login">Sign In</a></li>
+            <li><a href="/user/auth/register">Register</a></li>
+            <li><a href="/help">Help Center</a></li>
+          </ul>
+        </div>
+
+        <!-- Company -->
+       <button class="footer-collapse-btn" onclick="toggleFooter('company')">
+  Company ⬇
+</button>
+<div id="footer-company" class="footer-mobile-content">
+  <ul class="footer-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about">About Us</a></li>
+    <li><a href="/privacy">Privacy Policy</a></li>
+    <li><a href="/terms">Terms & Conditions</a></li>
+    <li><a href="/admin/login" style="color:#6a00ff;">Admin</a></li>
+  </ul>
+</div>
+
+
+        <!-- Network -->
+        <button class="footer-collapse-btn" onclick="toggleFooter('network')">
+          Our Network ⬇
+        </button>
+        <div id="footer-network" class="footer-mobile-content">
+          <ul class="footer-links">
+            <li><a href="https://timeless-threads.onrender.com" target="_blank">Timeless Threads</a></li>
+            <li><a href="https://securevault.ai" target="_blank">SecureVault</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="footer-bottom" style="background:#f0edff; padding:14px 0; text-align:center; border-top:1px solid #e1dcff;">
+    <p style="margin:0; font-size:0.85rem; color:#555;">
+      © 2025 Dcorp Ads. Empowering digital growth.
+    </p>
+  </div>
+
+</footer>
+
+
+<!-- FOOTER JS (collapse script) -->
+<script>
+  function toggleFooter(section) {
+    const target = document.getElementById("footer-" + section);
+    if (target.style.display === "block") {
+      target.style.display = "none";
+    } else {
+      target.style.display = "block";
+    }
+  }
+</script>

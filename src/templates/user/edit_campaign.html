@@ -1,0 +1,200 @@
+{% extends "user/layout/base_user.html" %}
+{% block title %}Edit Campaign{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-box {
+        background: white;
+        border-radius: 14px;
+        padding: 24px;
+        border: 1px solid rgba(0,0,0,0.08);
+        max-width: 850px;
+        margin: auto;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .locked-field {
+        background: #f0f0f0 !important;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+</style>
+
+<div class="container-fluid px-3">
+
+    <h3 class="fw-bold mb-4">Edit Your Campaign</h3>
+
+    {% set approved = (campaign.status == "approved") %}
+
+    <div class="edit-box">
+
+        <form action="{{ url_for('campaign.edit_campaign_submit', cid=campaign._id) }}"
+              method="POST" enctype="multipart/form-data">
+
+            <!-- TITLE -->
+            <div class="mb-3">
+                <label class="form-label">Campaign Title</label>
+                <input type="text" name="title"
+                       class="form-control"
+                       value="{{ campaign.title }}" required>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-3">
+                <label class="form-label">Campaign Description</label>
+                <textarea name="description" class="form-control" rows="3">{{ campaign.description }}</textarea>
+            </div>
+
+            <!-- REDIRECT URL (always editable) -->
+            <div class="mb-3">
+                <label class="form-label">Redirect URL (Landing Page)</label>
+                <input type="url"
+                       name="redirect_url"
+                       class="form-control"
+                       placeholder="https://example.com/product"
+                       value="{{ campaign.redirect_url }}">
+            </div>
+
+            <!-- PRODUCT NAME -->
+            <div class="mb-3">
+                <label class="form-label">Product / Offer Name</label>
+                <input type="text"
+                       name="product_name"
+                       class="form-control {% if approved %}locked-field{% endif %}"
+                       value="{{ campaign.product_name }}"
+                       {% if approved %}readonly{% endif %}>
+            </div>
+
+            <!-- SLOT SELECTION -->
+            <div class="mb-3">
+                <label class="form-label">Ad Placement Slot</label>
+                <select name="slot_id"
+                        class="form-control {% if approved %}locked-field{% endif %}"
+                        {% if approved %}disabled{% endif %}>
+
+                    {% for slot_id, info in slots.items() %}
+                    <option value="{{ slot_id }}"
+                        {% if campaign.slot_id == slot_id %}selected{% endif %}>
+                        {{ info.name }} — {{ info.type|title }} ({{ info.dimensions }})
+                    </option>
+                    {% endfor %}
+                </select>
+
+                {% if approved %}
+                    <small class="text-muted">Slot cannot be changed after approval.</small>
+                {% endif %}
+            </div>
+
+            <!-- BIDDING -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Bidding Method</label>
+                    <select name="bidding_type"
+                            class="form-control {% if approved %}locked-field{% endif %}"
+                            {% if approved %}disabled{% endif %}>
+                        <option value="CPC" {% if campaign.bidding_type == "CPC" %}selected{% endif %}>CPC – Pay Per Click</option>
+                        <option value="CPM" {% if campaign.bidding_type == "CPM" %}selected{% endif %}>CPM – Per 1000 Impressions</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Bid Amount (₹)</label>
+                    <input type="number" name="bid_amount" step="0.10"
+                           class="form-control {% if approved %}locked-field{% endif %}"
+                           value="{{ campaign.bid_amount }}"
+                           {% if approved %}readonly{% endif %}>
+                </div>
+            </div>
+
+            <!-- BUDGET -->
+            <div class="mb-3">
+                <label class="form-label">Total Budget (₹)</label>
+                <input type="number"
+                       name="budget"
+                       step="0.01"
+                       class="form-control"
+                       value="{{ campaign.budget }}"
+                       {% if approved %}min="{{ campaign.budget }}"{% endif %}>
+
+                {% if approved %}
+                    <small class="text-muted">Budget can be increased but not decreased.</small>
+                {% endif %}
+            </div>
+
+            <!-- DATES -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Start Date</label>
+                    <input type="date"
+                           name="start_date"
+                           class="form-control {% if approved %}locked-field{% endif %}"
+                           value="{{ campaign.start_date }}"
+                           {% if approved %}readonly{% endif %}>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">End Date</label>
+                    <input type="date"
+                           name="end_date"
+                           class="form-control {% if approved %}locked-field{% endif %}"
+                           value="{{ campaign.end_date }}"
+                           {% if approved %}readonly{% endif %}>
+                </div>
+            </div>
+
+            <!-- CURRENT CREATIVE -->
+            <div class="mb-3">
+                <label class="form-label">Current Creative</label><br>
+
+                {% if campaign.creative_image %}
+                    <img src="{{ campaign.creative_image }}"
+                         class="img-fluid rounded mb-2"
+                         style="max-height: 240px; object-fit: cover;">
+                {% else %}
+                    <p class="text-muted">No creative uploaded.</p>
+                {% endif %}
+
+                {% if campaign.creative_status %}
+                    <p class="mt-2">
+                        Status:
+                        {% if campaign.creative_status == "approved" %}
+                            <span class="badge bg-success">Approved</span>
+                        {% elif campaign.creative_status == "rejected" %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
+            </div>
+
+            <!-- NEW CREATIVE -->
+            <div class="mb-3">
+                <label class="form-label">Upload New Creative (optional)</label>
+                <input type="file" name="ad_image" class="form-control" accept="image/*">
+                <small class="text-muted">Uploading a new creative will require admin re-approval.</small>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{{ url_for('campaign.campaigns_list') }}" class="btn btn-secondary">
+                    Back
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    Save Changes
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

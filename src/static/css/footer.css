@@ -1,0 +1,81 @@
+/* ================================
+   FOOTER MAIN STYLES
+================================ */
+
+.footer-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin: 6px 0;
+}
+
+.footer-links a {
+  color: #555;
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: 0.2s;
+}
+
+.footer-links a:hover {
+  color: #6a00ff;
+  text-decoration: underline;
+}
+
+.footer-collapse-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  width: 100%;
+  text-align: left;
+  font-weight: 700;
+  padding: 10px 0;
+  color: #222;
+}
+
+.footer-mobile-content {
+  display: none;
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+
+.footer-bottom {
+  background: #f0edff;
+  padding: 14px 0;
+  text-align: center;
+  border-top: 1px solid #e1dcff;
+}
+
+.footer-bottom p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* DESKTOP ONLY */
+@media (min-width: 768px) {
+  .footer-desktop-column {
+    display: block;
+  }
+}
+
+/* MOBILE ONLY */
+@media (max-width: 767px) {
+  .footer-desktop-column {
+    display: none;
+  }
+
+  .footer-collapse-btn {
+    display: block;
+  }
+}

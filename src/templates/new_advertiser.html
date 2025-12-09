@@ -1,0 +1,22 @@
+<!-- templates/new_advertiser.html -->
+{% extends "base.html" %}
+
+{% block title %}New Advertiser{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-4">Create New Advertiser</h2>
+
+<form method="POST" action="/admin/advertisers/new">
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input name="name" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input name="email" type="email" class="form-control" required />
+    </div>
+
+    <button class="btn btn-primary">Create Advertiser</button>
+</form>
+{% endblock %}
