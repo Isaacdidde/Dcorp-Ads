@@ -6,7 +6,7 @@ import os
 import sys
 
 # ============================================================
-# FIX: Add src/ and project root to sys.path BEFORE ANY IMPORTS
+# Ensure project root and src/ are in sys.path BEFORE imports
 # ============================================================
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_DIR = os.path.join(ROOT_DIR, "src")
@@ -17,7 +17,7 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
 # ============================================================
-# Imports (now safe)
+# Imports (safe)
 # ============================================================
 from flask import (
     Flask, render_template, request, session,
@@ -26,36 +26,38 @@ from flask import (
 from flask_cors import CORS
 from bson import ObjectId
 from datetime import datetime
-import inspect
 import importlib
+import inspect
 import logging
 
-# App utilities
+# Utilities
 from utils.timezone import to_ist
 from config.settings import settings
 
-# DB
-from database.connection import get_collection
+# Database
+from database.connection import get_collection, get_db
 
-# Ads APIs
+# Tracking API
 from api.ads.ad_tracking_api import ads_tracking_bp
 
-from database.connection import get_db
-print("Connected DB:", get_db().name)
-
-
+# Debug print (safe for prod)
+print(f"✅ MongoDB Connected: {get_db().name}")
 
 # ------------------------------------------------------------
-# Logger Setup
+# Logger
 # ------------------------------------------------------------
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcorp.app")
 
 
 # ------------------------------------------------------------
-# Auto Blueprint Loader
+# Blueprint Loader (NO auto-discovery)
 # ------------------------------------------------------------
 def register_blueprints_from_module(app, module_path, url_prefix=None, preferred_names=None):
+    """
+    Only registers explicitly-named blueprints.
+    Prevents duplicate blueprint names and accidental imports.
+    """
     try:
         module = importlib.import_module(module_path)
     except Exception as e:
@@ -64,23 +66,24 @@ def register_blueprints_from_module(app, module_path, url_prefix=None, preferred
 
     registered = []
 
-    # Register only preferred blueprints
     if preferred_names:
         for name in preferred_names:
             bp = getattr(module, name, None)
 
-            if bp and getattr(bp, "__class__", None).__name__ == "Blueprint":
-                try:
-                    app.register_blueprint(bp, url_prefix=url_prefix)
-                    logger.info(f"Registered: {module_path}.{name}")
-                    registered.append(name)
-                except Exception as err:
-                    logger.error(f"Failed to register {module_path}.{name}: {err}")
+            if not bp:
+                continue
 
-    # Do NOT auto-register unnamed members.
-    # Prevents duplicate blueprint registration.
+            if getattr(bp, "__class__", None).__name__ != "Blueprint":
+                continue
+
+            try:
+                app.register_blueprint(bp, url_prefix=url_prefix)
+                logger.info(f"Registered: {module_path}.{name}")
+                registered.append(name)
+            except Exception as err:
+                logger.error(f"Failed to register {module_path}.{name}: {err}")
+
     return registered
-
 
 
 # ------------------------------------------------------------
@@ -93,9 +96,7 @@ def create_app():
         static_folder="src/static"
     )
 
-    # ------------------------------------------
-    # Security + API Config
-    # ------------------------------------------
+    # Security
     app.config["SECRET_KEY"] = settings.SECRET_KEY
     app.config["DCORP_API_URL"] = settings.DCORP_API_URL
 
@@ -103,16 +104,15 @@ def create_app():
     CORS(app)
 
     # ------------------------------------------
-    # Template Injection: User Info
+    # Inject logged-in user into templates
     # ------------------------------------------
     @app.context_processor
-    def inject_user_info():
+    def inject_user():
         uid = session.get("user_id")
         if not uid:
             return {"user_info": None}
 
         users = get_collection("users")
-
         try:
             user = users.find_one({"_id": ObjectId(uid)})
         except:
@@ -121,17 +121,17 @@ def create_app():
         return {"user_info": user}
 
     # ------------------------------------------
-    # Template Injection: IST time
+    # Inject IST time into templates
     # ------------------------------------------
     @app.context_processor
-    def inject_now():
+    def inject_time():
         return {
             "now": datetime.utcnow,
             "now_ist": lambda: to_ist(datetime.utcnow())
         }
 
     # ------------------------------------------
-    # Static favicon
+    # Favicon
     # ------------------------------------------
     @app.route("/favicon.ico")
     def favicon():
@@ -145,7 +145,7 @@ def create_app():
             return "", 204
 
     # ------------------------------------------------------
-    # Register Admin Panel
+    # Admin Panel
     # ------------------------------------------------------
     register_blueprints_from_module(
         app,
@@ -155,7 +155,7 @@ def create_app():
     )
 
     # ------------------------------------------------------
-    # Ads Delivery (WINNER PICKING)
+    # Ads Delivery (Winner Picking)
     # ------------------------------------------------------
     try:
         from api.ads.routes import ads_slot_api
@@ -165,7 +165,8 @@ def create_app():
         logger.warning(f"Failed to register ads_slot_api: {e}")
 
     # ------------------------------------------------------
-    # ⭐ Impression + Click Tracking (ALREADY has prefix)
+    # Impression + Click Tracking
+    # (Prefix already inside the blueprint)
     # ------------------------------------------------------
     app.register_blueprint(ads_tracking_bp)
     logger.info("Registered ads_tracking_bp at /api/ads/track")
@@ -194,8 +195,8 @@ def create_app():
         ("api.billing.transaction_logs", "/api/billing", ["transaction_logs_bp"]),
     ]
 
-    for module_path, prefix, names in admin_api_modules:
-        register_blueprints_from_module(app, module_path, prefix, names)
+    for module, prefix, names in admin_api_modules:
+        register_blueprints_from_module(app, module, prefix, names)
 
     # ------------------------------------------------------
     # User API Blueprints
@@ -213,11 +214,11 @@ def create_app():
         ("api.user.settings", "/user", ["settings_bp"]),
     ]
 
-    for module_path, prefix, names in user_api_modules:
-        register_blueprints_from_module(app, module_path, prefix, names)
+    for module, prefix, names in user_api_modules:
+        register_blueprints_from_module(app, module, prefix, names)
 
     # ------------------------------------------------------
-    # Public Pages
+    # Public Routes
     # ------------------------------------------------------
     @app.route("/")
     def home():
@@ -240,7 +241,7 @@ def create_app():
     # 404 Handler
     # ------------------------------------------------------
     @app.errorhandler(404)
-    def handle_404(err):
+    def not_found(err):
         if request.path.startswith("/api/"):
             return {"error": "Not Found"}, 404
         return render_template("404.html"), 404
@@ -249,7 +250,7 @@ def create_app():
 
 
 # ============================================================
-# Dev Entry Point
+# Development Entry Point
 # ============================================================
 if __name__ == "__main__":
     app = create_app()
