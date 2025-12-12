@@ -1,12 +1,62 @@
-<!-- templates/404.html -->
-{% extends "base.html" %}
+{% extends "base_public_no_nav.html" %}
+{% set hide_footer = true %}
 
 {% block title %}Page Not Found — 404{% endblock %}
 
 {% block content %}
-<div class="text-center py-5">
-    <h1 class="display-4">404</h1>
-    <p class="lead">Sorry — the page you requested was not found.</p>
-    <a href="/admin/dashboard" class="btn btn-primary">Go to Dashboard</a>
+
+<style>
+  .error-wrapper {
+      min-height: 85vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 40px 20px;
+  }
+
+  .error-code {
+      font-size: 90px;
+      font-weight: 800;
+      color: #4f46e5;
+      margin-bottom: 10px;
+  }
+
+  .error-text {
+      font-size: 20px;
+      color: #374151;
+      margin-bottom: 20px;
+  }
+
+  .error-btn {
+      display: inline-block;
+      padding: 12px 22px;
+      background: #4f46e5;
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: 0.2s ease-in-out;
+  }
+
+  .error-btn:hover {
+      background: #4338ca;
+      transform: translateY(-2px);
+  }
+</style>
+
+
+<div class="error-wrapper">
+
+    <div class="error-code">404</div>
+
+    <div class="error-text">
+        The page you're looking for doesn’t exist or may have moved.
+    </div>
+
+    <a href="/" class="error-btn">Return to Homepage</a>
+
 </div>
+
 {% endblock %}

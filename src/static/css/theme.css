@@ -75,3 +75,130 @@ a, p, h1, h2, h3, h4 {
   background: var(--primary);
   color: #fff;
 }
+/* ======================================================
+   RESPONSIVE LAYOUT SYSTEM — ADD BELOW EXISTING CSS
+====================================================== */
+
+/* Global container spacing on mobile */
+@media (max-width: 768px) {
+    .container, main, section {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}
+
+/* Typography scaling */
+@media (max-width: 768px) {
+    h1 { font-size: 1.9rem; }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.35rem; }
+    h4 { font-size: 1.15rem; }
+    p, span, a, label, input, button {
+        font-size: 0.95rem;
+    }
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Campaign/feature/pricing cards */
+.card, .feature-card, .pricing-card, .grid-campaign-card {
+    width: 100%;
+    border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+    .grid-campaign-card {
+        margin-bottom: 20px;
+    }
+}
+
+/* Creative image wrapper (admin panel) */
+.creative-img-wrapper {
+    height: 320px;
+}
+
+@media (max-width: 768px) {
+    .creative-img-wrapper {
+        height: 220px;
+    }
+}
+
+/* Public navbar tweaks */
+@media (max-width: 768px) {
+    .navbar .btn {
+        padding: 6px 14px;
+        font-size: 14px;
+    }
+}
+
+/* Footer: hide desktop columns on mobile */
+@media (max-width: 768px) {
+    .footer-desktop-column {
+        display: none !important;
+    }
+}
+
+/* Sidebar responsiveness (Admin + User dashboards) */
+.sidebar {
+    transition: left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 60px;
+        left: -240px;
+        height: calc(100vh - 60px);
+        z-index: 9999;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    #mainContent {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* User avatar scaling */
+.user-avatar,
+.rounded-circle {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .user-avatar {
+        width: 55px;
+        height: 55px;
+    }
+}
+
+/* Textarea responsiveness */
+.review-textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+/* Table responsiveness */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Utility helpers */
+.text-center-mobile {
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .flex-mobile-column {
+        flex-direction: column !important;
+    }
+}

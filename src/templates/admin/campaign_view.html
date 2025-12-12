@@ -1,7 +1,6 @@
 {% extends "admin/layout/base_admin.html" %}
 {% block content %}
 
-<!-- Modern Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -26,23 +25,21 @@
   }
 
   .creative-img-wrapper {
-    width: 100%;
-    height: 320px;
-    background: #0f172a;
-    border-radius: 14px;
-    border: 1px solid #1e293b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+      width: 100%;
+      height: 320px;
+      background: #0f172a;
+      border-radius: 14px;
+      border: 1px solid #1e293b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
   }
 
   .creative-img-wrapper img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      object-position: center;
-      display: block;
   }
 
   .status-badge {
@@ -52,6 +49,7 @@
       font-weight: 600;
       display: inline-block;
   }
+
   .status-pending { background:#ffcf56; color:#000; }
   .status-approved { background:#3ddc84; color:#000; }
   .status-rejected { background:#ef4444; color:#fff; }
@@ -87,58 +85,105 @@
   .metric-title {
       font-size: 13px;
       color:#9ca3af;
-      font-weight: 500;
   }
 
   .metric-value {
       font-size: 22px;
       font-weight: 700;
-      margin-top: 6px;
       color:#f3f4f6;
   }
 
-  .admin-btn {
-      font-weight: 600;
-      padding: 12px 24px;
-      border-radius: 10px;
-      width: 100%;
-      border: none;
-      font-size: 15px;
-  }
+  /* Rejection reason spacing */
+  /* Make textarea sit inside the card padding properly */
+/* Proper padding and positioning for textarea */
+.admin-review-box {
+    padding-bottom: 30px !important;
+}
 
-  .approve-btn { background:#3ddc84; color:#000; }
-  .reject-btn  { background:#ef4444; color:#fff; }
-  .pause-btn   { background:#facc15; color:#000; }
-  .resume-btn  { background:#22c55e; color:#000; }
+/* Wrapper ensures textarea never touches the edge */
+.review-wrapper {
+    padding-right: 4px;     /* keeps right spacing clean */
+    padding-top: 6px;
+}
 
-  .perf-btn {
-      background:#4f46e5;
-      color:#fff;
-      font-weight:600;
-      padding:12px 20px;
-      text-align:center;
-      border-radius:10px;
-      display:block;
-      text-decoration:none;
-      margin-bottom:20px;
-      transition:0.2s;
-  }
+/* Textarea styling */
+.review-textarea {
+    width: 100%;
+    display: block;
 
-  .perf-btn:hover {
-      background:#6366f1;
-      transform:translateY(-2px);
-  }
+    background: #0f172a;
+    color: #fff;
 
-  /* New tighter layout for admin review */
-  .review-textarea {
-      background:#0f172a;
-      color:#fff;
-      border:1px solid #1e293b;
-      border-radius:10px;
-      padding:12px;
-      width:100%;
-      resize: vertical;
-  }
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+
+    padding: 16px;
+    resize: vertical;
+
+    /* prevents overflow outside card */
+    box-sizing: border-box;
+
+    margin-top: 20px;
+}
+
+
+
+  /* Buttons side by side */
+  /* Modern dual action bar */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 10px;
+}
+
+.action-buttons form {
+    flex: 1;
+}
+
+/* Button styles — bigger, smoother, aligned */
+.action-buttons button {
+    width: 100%;
+    padding: 14px 0;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    letter-spacing: 0.3px;
+    transition: 0.25s ease;
+}
+
+/* Approve */
+.btn-approve {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #000;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+}
+
+.btn-approve:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.45);
+}
+
+/* Reject */
+.btn-reject {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+.btn-reject:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.45);
+}
+
+/* Make the whole section look intentional */
+.section.action-section {
+    padding-top: 34px;
+    padding-bottom: 34px;
+    text-align: center;
+}
+
 </style>
 
 {% set safe_budget = c.budget or 0 %}
@@ -150,12 +195,10 @@
 
 <div class="row g-4">
 
-    <!-- LEFT COLUMN -->
+    <!-- LEFT -->
     <div class="col-lg-8">
 
-        <!-- BASIC INFO -->
         <div class="section">
-
             <div class="status-badge status-{{ c.status }}">{{ c.status }}</div>
 
             <h2 style="margin-top:14px; color:white; font-size:24px; font-weight:700;">
@@ -171,7 +214,7 @@
             <p class="label">Redirect URL</p>
             <p class="value">
               {% if c.redirect_url %}
-                <a href="{{ c.redirect_url }}" target="_blank" style="color:#818cf8; text-decoration:none;">
+                <a href="{{ c.redirect_url }}" target="_blank" style="color:#818cf8;">
                     {{ c.redirect_url }}
                 </a>
               {% else %}
@@ -196,37 +239,34 @@
             {% endif %}
         </div>
 
-        <!-- CREATIVE -->
         <div class="section">
-            <h4 style="color:white; font-size:18px; margin-bottom:16px;">Creative Preview</h4>
+            <h4 style="color:white; margin-bottom:16px;">Creative Preview</h4>
 
             <div class="creative-img-wrapper">
-                <img 
-                  src="{{ c.creative_image or '/static/defaults/no-image.png' }}"
-                  onerror="this.onerror=null; this.src='/static/defaults/no-image.png';"
-                  alt="Creative">
+                <img src="{{ c.creative_image or '/static/defaults/no-image.png' }}"
+                     onerror="this.onerror=null; this.src='/static/defaults/no-image.png';">
             </div>
         </div>
 
     </div>
 
-    <!-- RIGHT COLUMN -->
+    <!-- RIGHT -->
     <div class="col-lg-4">
 
-        <!-- PERFORMANCE BUTTON -->
-        <a href="/admin/campaign/{{ c._id }}/performance" class="perf-btn">
+        <a href="/admin/campaign/{{ c._id }}/performance"
+           class="perf-btn"
+           style="display:block; background:#4f46e5; color:white; padding:12px; text-align:center;
+                  border-radius:10px; margin-bottom:20px;">
             View Performance Dashboard →
         </a>
 
-        <!-- ADVERTISER INFO -->
         <div class="section">
-            <h4 class="label mb-2" style="font-size:16px;">Advertiser Info</h4>
+            <h4 class="label" style="font-size:16px;">Advertiser Info</h4>
 
-            <div style="display:flex; gap:14px; align-items:center; margin-top:10px;">
-                <img 
-                    src="{{ advertiser.profile_pic }}"
-                    onerror="this.onerror=null; this.src='/static/image/default_user.png';"
-                    style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
+            <div style="display:flex; gap:14px; margin-top:10px;">
+                <img src="{{ advertiser.profile_pic }}"
+                     onerror="this.onerror=null; this.src='/static/image/default_user.png';"
+                     style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
                 <div>
                     <p class="value">{{ advertiser.name }}</p>
                     <p class="label">{{ advertiser.email }}</p>
@@ -242,15 +282,13 @@
             <p class="label mt-3">User ID</p>
             <p class="value">{{ advertiser._id }}</p>
 
-            <a href="/admin/users" style="color:#818cf8; text-decoration:none;">View User →</a>
+            <a href="/admin/users" style="color:#818cf8;">View User →</a>
         </div>
 
-        <!-- METRICS -->
         <div class="section">
-            <h4 class="label mb-2" style="font-size:16px;">Campaign Metrics</h4>
+            <h4 class="label" style="font-size:16px;">Campaign Metrics</h4>
 
             <div class="metrics-grid">
-
                 <div class="metric-box">
                     <div class="metric-title">Budget</div>
                     <div class="metric-value">₹{{ safe_budget }}</div>
@@ -275,61 +313,54 @@
                     <div class="metric-title">Pacing</div>
                     <div class="metric-value">{{ pacing.status }}</div>
                 </div>
-
             </div>
         </div>
 
-        <!-- ADMIN REVIEW BOX -->
         {% if c.status == "pending" %}
 
-        <div class="section">
+       <!-- ADMIN REVIEW -->
+<div class="section admin-review-box">
+    <h5 class="text-white mb-3">Admin Review</h5>
 
-            <h5 class="text-white mb-3">Admin Review</h5>
+    <label class="form-label text-white">Rejection Reason</label>
 
-            <label class="form-label text-white">Rejection Reason</label>
+    <div class="review-wrapper">
+        <textarea name="reason"
+                  form="rejectForm"
+                  class="review-textarea"
+                  placeholder="Enter reason if rejecting..."></textarea>
+    </div>
+</div>
 
-            <textarea name="reason"
-                      form="rejectForm"
-                      class="review-textarea"
-                      placeholder="Enter reason if rejecting..."></textarea>
+        <!-- APPROVE / REJECT BUTTONS (IMPROVED) -->
+        <div class="section action-section">
 
-        </div>
+    <div class="action-buttons">
 
-        <!-- BUTTON BLOCK -->
-        <div class="section" style="text-align:center;">
+        <!-- Approve -->
+        <form id="approveForm"
+              action="{{ url_for('admin_panel.approve_campaign', cid=c._id) }}"
+              method="POST">
+            <button type="submit" class="btn-approve">Approve</button>
+        </form>
 
-            <!-- Approve -->
-            <form id="approveForm"
-                  action="{{ url_for('admin_panel.approve_campaign', cid=c._id) }}"
-                  method="POST" class="mb-3">
+        <!-- Reject -->
+        <form id="rejectForm"
+              action="{{ url_for('admin_panel.reject_campaign', cid=c._id) }}"
+              method="POST">
+            <button type="submit" class="btn-reject">Reject</button>
+        </form>
 
-                <button type="submit"
-                        class="btn btn-success w-100 py-3"
-                        style="font-size:18px; border-radius:12px;">
-                    Approve Campaign
-                </button>
-            </form>
+    </div>
 
-            <!-- Reject -->
-            <form id="rejectForm"
-                  action="{{ url_for('admin_panel.reject_campaign', cid=c._id) }}"
-                  method="POST">
-
-                <button type="submit"
-                        class="btn btn-danger w-100 py-3"
-                        style="font-size:18px; border-radius:12px;">
-                    Reject Campaign
-                </button>
-            </form>
-
-        </div>
+</div>
 
         {% endif %}
 
         {% if c.status == "approved" %}
         <div class="section">
             <form method="POST" action="{{ url_for('admin_panel.pause_campaign', cid=c._id) }}">
-                <button class="admin-btn pause-btn">Pause Campaign</button>
+                <button class="admin-btn" style="background:#facc15; color:#000;">Pause Campaign</button>
             </form>
         </div>
         {% endif %}
@@ -337,7 +368,7 @@
         {% if c.status == "paused" %}
         <div class="section">
             <form method="POST" action="{{ url_for('admin_panel.resume_campaign', cid=c._id) }}">
-                <button class="admin-btn resume-btn">Resume Campaign</button>
+                <button class="admin-btn" style="background:#22c55e; color:#000;">Resume Campaign</button>
             </form>
         </div>
         {% endif %}

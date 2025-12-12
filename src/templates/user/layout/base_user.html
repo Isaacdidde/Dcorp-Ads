@@ -13,11 +13,11 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/user_dashboard.css') }}">
+      
 </head>
 
 <style>
 /* ===================== Flash Messages ===================== */
-
 .flash-container {
     position: fixed;
     top: 20px;
@@ -81,7 +81,7 @@
     to   { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* Force sidebar links always clickable */
+/* Sidebar clickable fix */
 .sidebar a {
     position: relative;
     z-index: 10;
@@ -115,7 +115,6 @@
     justify-content: space-between;
     margin-top: 18px;
 }
-
 </style>
 
 <body>
@@ -129,8 +128,9 @@
 
     <div class="user-box">
 
-        <!-- FIXED: Correct field is profile_image -->
-        <img src="{{ user_info.profile_image or '/static/image/default_user.png' }}"
+        <!-- FIXED profile picture logic -->
+        <img src="{{ user_info.profile_pic or '/static/image/default_user.png' }}"
+             onerror="this.onerror=null; this.src='/static/image/default_user.png'"
              class="user-avatar">
 
         <div class="user-info">
@@ -140,7 +140,6 @@
 
     </div>
 </nav>
-
 
 <!-- ===================== FLASHES ===================== -->
 <div class="flash-container">
@@ -155,7 +154,6 @@
         {% endif %}
     {% endwith %}
 </div>
-
 
 <!-- ===================== LAYOUT ===================== -->
 <div class="layout">
@@ -211,7 +209,6 @@
 
 </div>
 
-
 <!-- ===================== LOGOUT MODAL ===================== -->
 <div id="logoutConfirmModal" class="confirm-modal">
     <div class="confirm-box">
@@ -223,7 +220,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- ===================== JS ===================== -->
 <script>
@@ -239,7 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function openLogoutModal() {
-    console.log("Logout modal opened");
     document.getElementById("logoutConfirmModal").style.display = "flex";
 }
 

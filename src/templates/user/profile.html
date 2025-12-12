@@ -24,9 +24,13 @@
   <div class="card shadow-sm p-4">
 
     <div class="text-center mb-4">
-      <img src="{{ user_info.profile_image or '/static/image/default_avatar.png' }}"
-           class="rounded-circle"
-           style="width:120px; height:120px; object-fit:cover; border:3px solid #ddd;">
+
+      <!-- ✅ Corrected profile picture handling -->
+      <img 
+        src="{{ user_info.profile_pic if user_info.profile_pic else '/static/image/default_user.png' }}"
+        onerror="this.onerror=null; this.src='/static/image/default_user.png'"
+        class="rounded-circle"
+        style="width:120px; height:120px; object-fit:cover; border:3px solid #ddd;">
     </div>
 
     <!-- Upload Photo -->

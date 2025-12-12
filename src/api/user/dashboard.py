@@ -41,16 +41,24 @@ def get_user_info():
     if not user:
         return None
 
-    # Wallet balance calculation (already production-safe)
+    # -----------------------------
+    # FIX: Unify profile image field
+    # -----------------------------
+    profile_pic = (
+        user.get("profile_pic")            # new field used everywhere
+        or user.get("profile_image")       # legacy field (your old uploads)
+        or "/static/image/default_user.png"  # safe fallback
+    )
+
+    # Wallet balance calculation (already correct)
     wallet_balance = calculate_balance(user_id)
 
     return {
         "name": user.get("name") or "",
         "email": user.get("email") or "",
-        "profile_image": user.get("profile_image") or "/static/uploads/profile.jpg",
+        "profile_pic": profile_pic,        # <-- unified final field
         "wallet_balance": wallet_balance,
     }
-
 
 # -------------------------------------------------------
 # USER DASHBOARD ROUTE

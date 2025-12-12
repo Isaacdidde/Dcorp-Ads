@@ -269,11 +269,31 @@ def view_campaign(cid):
         if not c:
             return "Campaign not found", 404
 
+        # -------- Date Formatter --------
+        def format_date(val):
+            if not val:
+                return "—"
+            try:
+                if isinstance(val, str):
+                    val = datetime.fromisoformat(val)
+                return val.strftime("%d %b %Y")
+            except:
+                return "—"
+
+        # -------- Add Date Strings for Template --------
+        c["start_date_str"] = format_date(c.get("start_date"))
+        c["end_date_str"] = format_date(c.get("end_date"))
+
+        # Convert ID to string for other collections
         cid_str = str(c["_id"])
 
+        # -------- Creative Data --------
         creative = creatives_col.find_one({"campaign_id": cid_str})
         if creative:
-            c["creative_image"] = creative.get("image_url") or url_for("static", filename="defaults/no-image.png")
+            c["creative_image"] = (
+                creative.get("image_url")
+                or url_for("static", filename="defaults/no-image.png")
+            )
             c["redirect_url"] = creative.get("redirect_url")
             c["creative_status"] = creative.get("status", "pending")
             c["rejection_reason"] = creative.get("rejection_reason", "")
@@ -282,38 +302,43 @@ def view_campaign(cid):
             c["redirect_url"] = None
             c["creative_status"] = "pending"
 
-        advertiser = users.find_one({"_id": safe_oid(c["user_id"])})
+        # -------- Advertiser Info --------
+        advertiser = users.find_one({"_id": safe_oid(c.get("user_id"))})
         if not advertiser:
             advertiser = {
                 "_id": "Unknown",
                 "name": "Unknown",
                 "email": "Unknown",
-                "profile_pic": "/static/image/default_user.png"
+                "profile_pic": "/static/image/default_user.png",
             }
         else:
             advertiser.setdefault("profile_pic", "/static/image/default_user.png")
 
+        # -------- Health Score --------
         try:
             health = compute_campaign_health(c)
-        except:
+        except Exception:
             health = {"score": 0}
 
+        # -------- Pacing --------
         try:
             pacing = compute_pacing(c)
-        except:
+        except Exception:
             pacing = {"status": "Unknown"}
 
+        # -------- Render Page --------
         return render_template(
             "admin/campaign_view.html",
             c=c,
             advertiser=advertiser,
             health=health,
-            pacing=pacing
+            pacing=pacing,
         )
 
     except Exception as e:
         current_app.logger.error(f"[ADMIN CAMPAIGN VIEW ERROR] {e}")
         return "Internal Server Error", 500
+
 
 
 # =====================================================================
