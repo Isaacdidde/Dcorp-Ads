@@ -90,7 +90,7 @@ dcorp-parent/
 │   │   └── logging.py
 │   │
 │   └── middleware/
-│       └── auth_guard.py         # admin auth middleware
+│       └── auth_guard.py         # admin auth middlewares
 │
 ├── scripts/
 │   ├── seed_admin.py
